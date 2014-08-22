@@ -520,3 +520,17 @@ double CMS_SUS_13_013::dFunctionJetReco(double dGenJetPt, std::string SearchReg)
     return effJetReco;
 }
 
+bool CMS_SUS_13_013::dFunctionVETO(std::vector leptons1, std::vector leptons2){
+    if (leptons1.size()>1 && leptons2.size() && leptons2[1]->pt()>5){//if there are two SS leptons and
+                                                                        //a third OS lepton which has pt>5
+        for (i=0; i<2, i++){                                            //for each of the SS lepton check the following
+            if(leptons1[i]->pdgid() + leptons2[1]->pdgid() == 0)        //if the leptons have the same flavour
+                TLorentzVector combinedM = leptons1[i].momentum + leptons2[1].momentum;
+                if (combinedM.M()<12){return true;}                     //mass<12 => gamma veto
+                if (leptons2[1].pt()>10 && 76<combinedM.M()<106){return true}              //76<mass<106 => Z veto
+                else if {return false;}
+        }
+    }
+    
+}
+

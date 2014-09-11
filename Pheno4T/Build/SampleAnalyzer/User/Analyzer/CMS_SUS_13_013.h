@@ -20,6 +20,7 @@ namespace MA5
         double dFunctionLepton(double dGenLepPt, int lepFlav, std::string SearchReg); //function for calculating Lepton efficiency
         double dFunctionBTag(double dGenJetPt, std::string SearchReg); //function for calculating BTag efficiency
         double dFunctionJetReco(double dGenJetPt, std::string SearchReg); //function for calculating BTag efficiency
+        double dFunctionTotalBTag(std::vector<const MCParticleFormat*> btagsvec);
      
         bool dFunctionVETO(std::vector<const MCParticleFormat*> leptons1, std::vector<const MCParticleFormat*> leptons2);
 

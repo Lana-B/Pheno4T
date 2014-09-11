@@ -318,7 +318,7 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
  
          VETObool=true;
          if( leptons.size() > 2 ){
-             cout<<">2 leptons!"<<endl;
+             //cout<<">2 leptons!"<<endl;
              bool negabool = dFunctionVETO(negaleptons, posileptons); //two SS negative leptons with pT>20, check positive leptons with no pT cut
              bool posibool = dFunctionVETO(posileptons, negaleptons); //two SS positive leptons with pT>20, check negative leptons with no pT cut
              
@@ -339,16 +339,20 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          dMETEff = dFunctionMET(event.mc()->MET().pt(), "SR28");
          dHTEff = dFunctionHT(event.mc()->THT(), "SR28");
 
-         for( int i=0; i<btags.size(); i++ )
+         /*for( int i=0; i<btags.size(); i++ )
          {
              dBTagEff *= dFunctionJetReco(btags[i]->momentum().Pt(), "SR28") * dFunctionBTag(btags[i]->momentum().Pt(), "SR28");
-         }
+         }*/
          
          for ( int i=0; i<leptons.size(); i++){
              dLeptonEff *= dFunctionLepton(leptons[i]->momentum().Pt(), leptons[i]->pdgid(), "SR28");
          }
+         
+         dBTagEff = dFunctionTotalBTag(btags);
 
          dSelectionEff = dHTEff * dMETEff * dBTagEff * dLeptonEff;
+         
+         //cout<<"Instantaneous selection efficiency:  "<<dSelectionEff<<endl;
          dCounterSelectionEff += dSelectionEff;
 
          return true;
@@ -464,4 +468,36 @@ bool CMS_SUS_13_013::dFunctionVETO(std::vector<const MCParticleFormat*> leptons1
     return bResult;
     
 }
+
+double CMS_SUS_13_013::dFunctionTotalBTag(std::vector<const MCParticleFormat*> btagsvec){
+    double w_0bTags = 1;
+    double w_1bTag = 0;
+    double product;
+    
+    for (int i=0; i<btagsvec.size();i++){
+        double totalbTag_i = dFunctionJetReco(btagsvec[i]->momentum().Pt(), "SR28") * dFunctionBTag(btagsvec[i]->momentum().Pt(), "SR28");
+        w_0bTags *= (1 - totalbTag_i);
+        //cout<<"jet reco eff "<<dFunctionJetReco(btagsvec[i]->momentum().Pt(), "SR28")<<"  btag"<<dFunctionBTag(btagsvec[i]->momentum().Pt(), "SR28")<<endl;
+        
+        product = totalbTag_i;
+        for(int j=0; j<btagsvec.size(); j++){
+            if (j == i){continue;}
+            else{
+                double totalbTag_j = dFunctionJetReco(btagsvec[j]->momentum().Pt(), "SR28") * dFunctionBTag(btagsvec[j]->momentum().Pt(), "SR28");
+                product *= (1 - totalbTag_j);
+            }
+        }
+        w_1bTag += product;
+        
+    }
+    double w_GreaterEqual2 = 1 - w_0bTags - w_1bTag;
+    if (w_1bTag + w_0bTags> 1 ){
+        
+        cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!wGE2  "<<w_GreaterEqual2<<"  w_0b: "<<w_0bTags<<"   w_1b: "<<w_1bTag<<endl;
+    }
+    return w_GreaterEqual2;
+}
+
+
+
 

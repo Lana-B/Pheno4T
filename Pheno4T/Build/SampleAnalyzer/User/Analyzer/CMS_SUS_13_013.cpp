@@ -1,8 +1,6 @@
 #include "SampleAnalyzer/User/Analyzer/CMS_SUS_13_013.h"
-#include "TLorentzVector.h"
 using namespace MA5;
 using namespace std;
-
 
 // -----------------------------------------------------------------------------
 // Initialize
@@ -13,7 +11,7 @@ bool CMS_SUS_13_013::Initialize(const MA5::Configuration& cfg, const std::map<st
     INFO << "        <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>" << endmsg;
     INFO << "        <>  Analysis: CMS-SUS-13-016, JHEP 01 (2014) 163                              <>" << endmsg;
     INFO << "        <>   (Search for new physics in events with same-sign                         <>" << endmsg;
-    INFO << "        <>     dileptons and jets in pp collisions at √s = 8 TeV)                     <>"<< endmsg;
+    INFO << "        <>     dileptons and jets in pp collisions at √s = 8 TeV)                     <>" << endmsg;
     INFO << "        <>  Recasted by: L.Beck, D.Dobur, B.Fuks, J.Keaveney, K.Mawatari, F.Blekman   <>" << endmsg;
     INFO << "        <>  Contact: lana.beck@cern.ch                                                <>" << endmsg;
     INFO << "        <>           fuks@cern.ch                                                     <>" << endmsg;
@@ -30,10 +28,10 @@ bool CMS_SUS_13_013::Initialize(const MA5::Configuration& cfg, const std::map<st
     Manager()->AddCut("2 leptons");
     Manager()->AddCut("same sign leptons");
 
-    Manager()->AddCut("Njets>4", "SR28");
-    Manager()->AddCut("NBjets>2", "SR28");
-    Manager()->AddCut("MET>120", "SR28");
-    Manager()->AddCut("HT>400", "SR28");
+    Manager()->AddCut("Njets>=4", "SR28");
+    Manager()->AddCut("NBjets>=2", "SR28");
+    //Manager()->AddCut("MET>120", "SR28");
+    //Manager()->AddCut("HT>400", "SR28");
     
     Manager()->AddCut("3rd lepton veto");
 
@@ -217,11 +215,6 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
 // -----------------------------------------------------------------------------
 bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
 {
-  // ***************************************************************************
-  // Example of analysis with generated particles
-  // Concerned samples : LHE/STDHEP/HEPMC
-  // ***************************************************************************
-
     if (event.mc() !=0)
      {
          dBTagEff = 1;
@@ -241,9 +234,9 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          //cout << "---------------NEW EVENT-------------------" << endl;
 
          std::vector<const MCParticleFormat*> electrons, muons, positrons, antimuons, jets, btags, MCMET;
-         std::vector<const MCParticleFormat*> leptons, leptonsAll; //electrons and muons
-         std::vector<const MCParticleFormat*> posileptons, posileptonsALL; //positrons and antimuons
-         std::vector<const MCParticleFormat*> negaleptons, negaleptonsALL; //electrons and muons
+         std::vector<const MCParticleFormat*> leptons; //electrons and muons
+         std::vector<const MCParticleFormat*> posileptons; //positrons and antimuons
+         std::vector<const MCParticleFormat*> negaleptons; //electrons and muons
          
          PHYSICS->mcConfig().AddHadronicId(5);  //identifying bjets as hadronic
          PHYSICS->mcConfig().AddHadronicId(21);  //identifying jets as hadronic
@@ -263,55 +256,43 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
              //-------------------------------Add particle to vector collections----------------------------//
              //---------------------------------------------------------------------------------------------//
 
-             
              if(part->statuscode() != 1) continue;
              if(part->pdgid() == 11) {
-                 if(part->momentum().Pt()>20 && std::abs(part->momentum().Eta())<2.5) electrons.push_back(part);
+                 if(/*part->momentum().Pt()>20 && */std::abs(part->momentum().Eta())<2.5) electrons.push_back(part);
              }
              else if(part->pdgid() == 13) {
-                 if(part->momentum().Pt()>20 && std::abs(part->momentum().Eta())<2.5) muons.push_back(part);
+                 if(/*part->momentum().Pt()>20 && */std::abs(part->momentum().Eta())<2.5) muons.push_back(part);
              }
              else if(part->pdgid() == -11) {
-                 if(part->momentum().Pt()>20 && std::abs(part->momentum().Eta())<2.5) positrons.push_back(part);
+                 if(/*part->momentum().Pt()>20 && */std::abs(part->momentum().Eta())<2.5) positrons.push_back(part);
              }
              else if(part->pdgid() == -13) {
-                 if(part->momentum().Pt()>20 && std::abs(part->momentum().Eta())<2.5) antimuons.push_back(part);
+                 if(/*part->momentum().Pt()>20 && */std::abs(part->momentum().Eta())<2.5) antimuons.push_back(part);
              }
              else if(std::abs(part->pdgid()) == 5) {
-                 if(part->momentum().Pt()>40 && std::abs(part->momentum().Eta())<2.5) btags.push_back(part);
+                 if(/*part->momentum().Pt()>40 && */std::abs(part->momentum().Eta())<2.5) btags.push_back(part);
              }
              else if(std::abs(part->pdgid()) == 21) {
-                 if(part->momentum().Pt()>40 && std::abs(part->momentum().Eta())<2.5) jets.push_back(part);
+                 if(/*part->momentum().Pt()>40 && */std::abs(part->momentum().Eta())<2.5) jets.push_back(part);
              }
              else if(std::abs(part->pdgid()) == 12) {
                  MCMET.push_back(part);
              }
              
              if(std::abs(part->pdgid()) == 11 || std::abs(part->pdgid()) == 13) {
-                 if(part->momentum().Pt()>20 && std::abs(part->momentum().Eta())<2.5) leptons.push_back(part);
+                 if(/*part->momentum().Pt()>20 && */std::abs(part->momentum().Eta())<2.5) leptons.push_back(part);
              }
              if(part->pdgid() == 11 || part->pdgid() == 13) {
-                 if(part->momentum().Pt()>20 && std::abs(part->momentum().Eta())<2.5) negaleptons.push_back(part); //Negative leptons with pt>20
+                 if(/*part->momentum().Pt()>20 && */std::abs(part->momentum().Eta())<2.5) negaleptons.push_back(part); //Negative leptons with pt>20
              }
              if(part->pdgid() == -11 || part->pdgid() == -13) {
-                 if(part->momentum().Pt()>20 && std::abs(part->momentum().Eta())<2.5) posileptons.push_back(part); //Positive leptons with pt>20
+                 if(/*part->momentum().Pt()>20 && */std::abs(part->momentum().Eta())<2.5) posileptons.push_back(part); //Positive leptons with pt>20
              }
-             if(std::abs(part->pdgid()) == 11 || std::abs(part->pdgid()) == 13) {
-                 if(std::abs(part->momentum().Eta())<2.5) leptonsAll.push_back(part); //All negative leptons with no pt cut
-             }
-             if(part->pdgid() == 11 || part->pdgid() == 13) {
-                 if(std::abs(part->momentum().Eta())<2.5) negaleptonsALL.push_back(part); //All negative leptons with no pt cut
-             }
-             if(part->pdgid() == -11 || part->pdgid() == -13) {
-                 if(std::abs(part->momentum().Eta())<2.5) posileptonsALL.push_back(part); //All positive leptons with no pt cut
-             }
-
          }
          
          //---------------------------------------------------------------------------------------------//
          //-----------------------Apply baseline cuts 2 same sign leptons-------------------------------//
          //---------------------------------------------------------------------------------------------//
-
 
          if ( !Manager()->ApplyCut( (leptons.size() > 1),"2 leptons")) return true; //there are at least 2 leptons with pt>20 |eta|>2.5
 
@@ -324,132 +305,40 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          //---------------------------------------------------------------------------------------------//
          //---------------------------------Making selection region cuts--------------------------------//
          //---------------------------------------------------------------------------------------------//
-         
-         if( !Manager()->ApplyCut((event.mc()->MET().pt() >120    ), "MET>120"))  return true;
-         if( !Manager()->ApplyCut((event.mc()->THT() >400   ), "HT>400"))  return true;
-         if( !Manager()->ApplyCut((jets.size() > 4), "Njets>4"))  return true;
-         if( !Manager()->ApplyCut((btags.size() > 2), "NBjets>2"))  return true;
- /*
-         if( leptonsAll.size() > 2 ){
-             bool negabool = dFunctionVETO(negaleptons, posileptonsALL); //two SS negative leptons with pT>20, check positive leptons with no pT cut
-             bool posibool = dFunctionVETO(posileptons, negaleptonsALL); //two SS positive leptons with pT>20, check negative leptons with no pT cut
-             
-             if( negabool == true || posibool == true){
-                 VETObool = false; //if the veto criteria or satisified the event does not pass the selection
-             }
-             else{
-                 VETObool = true;
-             }
-             
-             if ( !Manager()->ApplyCut( VETObool,"3rd lepton veto")) return true;
-             
-             
-             
-             if (leptonsAll.size() > 3){
-                 cout<<">3 leptons!!"<<endl;
-             }
-         }
-   */
+         if( !Manager()->ApplyCut((jets.size() > 3), "Njets>=4"))  return true;
+         if( !Manager()->ApplyCut((btags.size() > 1), "NBjets>=2"))  return true;
+         //if( !Manager()->ApplyCut((event.mc()->MET().pt() >120    ), "MET>120"))  return true;
+         //if( !Manager()->ApplyCut((event.mc()->THT() >400   ), "HT>400"))  return true;
+
          //---------------------------------------------------------------------------------------------//
          //----------------------------------------------veto-------------------------------------------//
          //--------------------low-mass bound-state or γ∗ → l+l− in the final state---------------------//
          //-------------------as well as multiboson (WZ, ZZ and tribosons) production-------------------//
          //---------------------------------------------------------------------------------------------//
-         
-         if( muons.size()>0 && antimuons.size()>0 ){  //for 2 opposite sign same flavour muons
-             if ( electrons.size() > 0 ){
-                 if (antimuons[0]->pt()>10){
-                     cout<<"VETO"<<endl;
-                     //if (invariant mass of muon and antimuon <12GeV |eta|<2.4) return true;
-                     if (antimuons[0]->pt()>5){
-                         cout<<"VETO"<<endl;
-                         //if (invariant mass of muon and antimuon 76<Mll<106GeV |eta|<2.4) return true;
-                     }
-                 }
+ 
+         VETObool=true;
+         if( leptons.size() > 2 ){
+             cout<<">2 leptons!"<<endl;
+             bool negabool = dFunctionVETO(negaleptons, posileptons); //two SS negative leptons with pT>20, check positive leptons with no pT cut
+             bool posibool = dFunctionVETO(posileptons, negaleptons); //two SS positive leptons with pT>20, check negative leptons with no pT cut
+             
+             if( negabool == true || posibool == true){
+                 VETObool = false; //if the veto criteria are satisified the event does not pass the selection
              }
-             if ( muons.size() > 1 ){
-                 if (antimuons[0]->pt()>10){
-                     cout<<"VETO"<<endl;
-                     //if (invariant mass of either muon and antimuon <12GeV |eta|<2.4) return true;
-                     if (antimuons[0]->pt()>5){
-                         cout<<"VETO"<<endl;
-                         //if (invariant mass of muon and antimuon 76<Mll<106GeV |eta|<2.4) return true;
-                     }
-                 }
-                 
-             }
-             if (positrons.size() > 0 ){
-                 if (muons[0]->pt()>10){
-                     cout<<"VETO"<<endl;
-                     //if (invariant mass of muon and antimuon <12GeV |eta|<2.4) return true;
-                     if (muons[0]->pt()>5){
-                         cout<<"VETO"<<endl;
-                         //if (invariant mass of muon and antimuon 76<Mll<106GeV |eta|<2.4) return true;
-                     }
-                 }
-             }
-             if ( antimuons.size()>1 ){
-                 if (muons[0]->pt()>10){
-                     cout<<"VETO"<<endl;
-                     //if (invariant mass of muon and either antimuon <12GeV |eta|<2.4) return true;
-                     if (muons[0]->pt()>5){
-                         cout<<"VETO"<<endl;
-                         //if (invariant mass of muon and antimuon 76<Mll<106GeV |eta|<2.4) return true;
-                     }
-                 }
+             
+             if (leptons.size() > 3){
+                 cout<<">3 leptons!!"<<endl;
              }
          }
-         
+         if ( !Manager()->ApplyCut( VETObool,"3rd lepton veto")) return true;
+
          //---------------------------------------------------------------------------------------------//
-         
-         if( electrons.size()>0 && positrons.size()>0 ){  //for 2 opposite sign same flavour electrons
-             if ( muons.size() > 0 ){
-                 if (positrons[0]->pt()>10){
-                     cout<<"VETO"<<endl;
-                     //if (invariant mass of muon and antimuon <12GeV |eta|<2.4) return true;
-                     if (positrons[0]->pt()>5){
-                         cout<<"VETO"<<endl;
-                         //if (invariant mass of muon and antimuon 76<Mll<106GeV |eta|<2.4) return true;
-                     }
-                 }
-             }
-             if ( electrons.size() > 1 ){
-                 if (positrons[0]->pt()>10){
-                     cout<<"VETO"<<endl;
-                     //if (invariant mass of either muon and antimuon <12GeV |eta|<2.4) return true;
-                     if (positrons[0]->pt()>5){
-                         cout<<"VETO"<<endl;
-                         //if (invariant mass of muon and antimuon 76<Mll<106GeV |eta|<2.4) return true;
-                     }
-                 }
-             }
-             if (antimuons.size() > 0 ){
-                 if (electrons[0]->pt()>10){
-                     cout<<"VETO"<<endl;
-                     //if (invariant mass of muon and antimuon <12GeV |eta|<2.4) return true;
-                     if (electrons[0]->pt()>5){
-                         cout<<"VETO"<<endl;
-                         //if (invariant mass of muon and antimuon 76<Mll<106GeV |eta|<2.4) return true;
-                     }
-                 }
-             }
-             if ( positrons.size()>1 ){
-                 if (electrons[0]->pt()>10){
-                     cout<<"VETO"<<endl;
-                     //if (invariant mass of muon and either antimuon <12GeV |eta|<2.4) return true;
-                     if (electrons[0]->pt()>5){
-                         cout<<"VETO"<<endl;
-                         //if (invariant mass of muon and antimuon 76<Mll<106GeV |eta|<2.4) return true;
-                     }
-                 }
-             }
-         }
-         
+         //------------------------------Calculate and combine efficiences------------------------------//
+         //---------------------------------------------------------------------------------------------//
          
          dMETEff = dFunctionMET(event.mc()->MET().pt(), "SR28");
          dHTEff = dFunctionHT(event.mc()->THT(), "SR28");
-         
-         
+
          for( int i=0; i<btags.size(); i++ )
          {
              dBTagEff *= dFunctionJetReco(btags[i]->momentum().Pt(), "SR28") * dFunctionBTag(btags[i]->momentum().Pt(), "SR28");
@@ -461,12 +350,17 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
 
          dSelectionEff = dHTEff * dMETEff * dBTagEff * dLeptonEff;
          dCounterSelectionEff += dSelectionEff;
-         cout<<"selection eff:  "<<dSelectionEff<<endl;
+
          return true;
      }//end of event.mc()
      
      return true;
 }//end of event loop
+
+
+//////////////////////////////////////////////////////////////////////////////
+//////*********Custom functions for calculating the efficiences********///////
+//////////////////////////////////////////////////////////////////////////////
 
 double CMS_SUS_13_013::dFunctionMET(double dGenMET, std::string SearchReg){
     double E_inf=0;
@@ -500,14 +394,14 @@ double CMS_SUS_13_013::dFunctionLepton(double dGenLepPt, int leptFlav, std::stri
     double sigma=1;
     if (SearchReg == "SR28"){
         if (leptFlav == 11 || leptFlav == -11){ //ELECTRON
-            E_inf = 0.640;      // +\- 0.001
-            E_10 = 0.170;  // +\-0.002
-            sigma = 36.94;      // +\-0.320
+            E_inf = 0.597;      // +\- 0.001
+            E_10 = 0.133;       // +\-0.002
+            sigma = 37.75;      // +\-0.300
         }
         if (leptFlav == 13 || leptFlav == -13){ //MUON
-            E_inf = 0.673;      // +\- 0.001
-            E_10 = 0.332;  // +\-0.003
-            sigma = 29.65;      // +\-0.382
+            E_inf = 0.617;      // +\- 0.001
+            E_10 = 0.291;       // +\-0.002
+            sigma = 29.949;     // +\-0.377
         }
     }
     double partofeff = (dGenLepPt - 10)/sigma ;
@@ -516,13 +410,13 @@ double CMS_SUS_13_013::dFunctionLepton(double dGenLepPt, int leptFlav, std::stri
 }
 
 double CMS_SUS_13_013::dFunctionBTag(double dGenJetPt, std::string SearchReg){
-    ///////Efficiency for a reconstructed jet that matchers to a b-quark to be btagged by the CMS algorithm/////
-    double dA = 1.55e-06; // +/-0.05e-07
-    double dB = -4.26e-04; // +/- 0.12e-04
-    double dC = 0.0391; // +/- 0.0008
-    double dD = -0.496; // +/- 0.020
-    double dE = -3.26e-04; // +/- 0.01e-04
-    double dF = 0.7681; // +/- 0.0016
+    ///////Efficiency for a reconstructed jet that matches to a b-quark to be btagged by the CMS algorithm/////
+    double dA = 1.55e-06;   // +/-0.05e-07
+    double dB = -4.26e-04;  // +/- 0.12e-04
+    double dC = 0.0391;     // +/- 0.0008
+    double dD = -0.496;     // +/- 0.020
+    double dE = -3.26e-04;  // +/- 0.01e-04
+    double dF = 0.7681;     // +/- 0.0016
     double effbTagged = 0;
     
     if (dGenJetPt > 120){
@@ -547,21 +441,27 @@ double CMS_SUS_13_013::dFunctionJetReco(double dGenJetPt, std::string SearchReg)
 }
 
 bool CMS_SUS_13_013::dFunctionVETO(std::vector<const MCParticleFormat*> leptons1, std::vector<const MCParticleFormat*> leptons2){
-    if (leptons1.size()>1 && leptons2.size() && leptons2[1]->pt()>5){//if there are two SS leptons and
-                                                                        //a third OS lepton which has pt>5
-        for (int i=0; i<2; i++){                                            //for each of the SS lepton check the following
-            if(leptons1[i]->pdgid() + leptons2[1]->pdgid() == 0)        //if the leptons have the same flavour
-                TLorentzVector Mll(leptons1[i]->momentum());
-                double MLLM = Mll.M();
-                TLorentzVector combinedM;
-                //double cmx = combinedM.X();
-                //combinedM += leptons1[i]->momentum();
-                //combinedM += leptons2[1]->momentum();
-                //if (combinedM.M()<12){return true;}                     //mass<12 => gamma veto
-            //if (leptons2[1]->pt()>10 && 76<combinedM.M()<106){return true;}              //76<mass<106 => Z veto
-                 {return false;}
+    bool bResult = false;
+    if (leptons1.size()>1 && leptons2.size()>0){//if there are two SS leptons and
+        if(leptons2[0]->momentum().Pt()>5){//a third OS lepton which has pt>5
+            for (int i=0; i<2; i++){       //for each of the SS lepton check the following
+                if(leptons1[i]->pdgid() + leptons2[0]->pdgid() == 0){        //if the leptons have the same flavour
+                    TLorentzVector combinedM;
+                    combinedM = leptons1[i]->momentum() + leptons2[0]->momentum();
+                    if (combinedM.M()<12){//mass<12 => gamma veto
+                        cout<<"VETO"<<endl;
+                        bResult = true;
+                    }
+                    else if (leptons2[0]->momentum().Pt()>10 && 76<combinedM.M() && combinedM.M()<106){//76<mass<106 => Z veto
+                        cout<<"VETO"<<endl;
+                        bResult = true;
+                    }
+                }
+
+            }
         }
     }
+    return bResult;
     
 }
 

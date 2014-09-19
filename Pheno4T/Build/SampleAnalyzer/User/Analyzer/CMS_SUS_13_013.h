@@ -47,6 +47,7 @@ namespace MA5
         
         double dCounterPassedEvents;
         double dCounterSelectionEff;
+        double dHTcount;
         
         bool VETObool;
         

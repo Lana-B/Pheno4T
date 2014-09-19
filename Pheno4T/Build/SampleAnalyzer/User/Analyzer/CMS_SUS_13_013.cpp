@@ -8,6 +8,7 @@ using namespace std;
 // -----------------------------------------------------------------------------
 bool CMS_SUS_13_013::Initialize(const MA5::Configuration& cfg, const std::map<std::string,std::string>& parameters)
 {
+    cout<<""<<endl;
     INFO << "        <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>" << endmsg;
     INFO << "        <>  Analysis: CMS-SUS-13-016, JHEP 01 (2014) 163                              <>" << endmsg;
     INFO << "        <>   (Search for new physics in events with same-sign                         <>" << endmsg;
@@ -20,29 +21,24 @@ bool CMS_SUS_13_013::Initialize(const MA5::Configuration& cfg, const std::map<st
     INFO << "        <>  For more information, see                                                 <>" << endmsg;
     INFO << "        <>  http://madanalysis.irmp.ucl.ac.be/wiki/PhysicsAnalysisDatabase            <>" << endmsg;
     INFO << "        <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>" << endmsg;
-    
+    cout<<""<<endl;
     cout << "BEGIN Initialization" << endl;
     
     Manager()->AddRegionSelection("SR28");
     
     Manager()->AddCut("2 leptons");
     Manager()->AddCut("same sign leptons");
-
     Manager()->AddCut("Njets>=4", "SR28");
     Manager()->AddCut("NBjets>=2", "SR28");
-    //Manager()->AddCut("MET>120", "SR28");
-    //Manager()->AddCut("HT>400", "SR28");
-    
     Manager()->AddCut("3rd lepton veto");
-
-
-    Manager()->AddHisto("njet",15,0,15);
     
     dCounterSelectionEff = 0;
     dCounterPassedEvents = 0;
-
+    dHTcount = 0.;
     
     cout << "END   Initialization" << endl;
+    cout<<""<<endl;
+
     return true;
 }
 
@@ -52,15 +48,19 @@ bool CMS_SUS_13_013::Initialize(const MA5::Configuration& cfg, const std::map<st
 // -----------------------------------------------------------------------------
 void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<SampleFormat>& files)
 {
+    cout<<""<<endl;
     cout << "BEGIN Finalization" << endl;
+    cout<<""<<endl;
+    cout<<"        <><><><>><><><><><><><><><><><><><><><><><><><>"<<endl; 
+    cout<<"        <> Events passed = "<<dCounterPassedEvents<<"                       <>"<<endl;
+    
+    cout<<"        <> Weighted events = "<<dCounterSelectionEff<<"                 <>"<<endl;
+    cout<<"        <> Selection efficiency for SR28= "<<dCounterSelectionEff*100/10000<<"%  <>"<<endl;
+    cout<<"        <><><><>><><><><><><><><><><><><><><><><><><><>"<<endl; 
+
+    cout<<""<<endl;
     
     //////// Plotting efficiency curves /////////
-    cout<<"Events passed = "<<dCounterPassedEvents<<endl;
-    
-    cout<<"Selection efficiency = "<<dCounterSelectionEff<<endl;
-    cout<<"Selection efficiency %  = "<<dCounterSelectionEff*100/10000<<endl;
-    
-    TFile* myOutput = new TFile("MyOutput.root", "RECREATE");
     
     double fauxHT, fauxHTEff;
     for (int i=0; i<=800; i+=20)
@@ -115,8 +115,6 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
         vecElectronEff.push_back(fauxElectronEff);
     }
 
-    //myOutput->cd();
-    
     TCanvas *c1 = new TCanvas();
     c1->cd();
     EffBTag = new TGraph(vecBTag.size(), &(vecBTag[0]), &(vecBTagEff[0]));
@@ -129,7 +127,7 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
     EffBTag->GetXaxis()->SetTitle("gen Jet PT");
     EffBTag->GetYaxis()->SetTitle("Efficiency");
     EffBTag->Draw("APL");
-    EffBTag->Write("BTag");
+    //EffBTag->Write("BTag");
     c1->SaveAs("BTagEff.png");
     
     TCanvas *c2 = new TCanvas();
@@ -142,7 +140,7 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
     EffHT->GetXaxis()->SetTitle("gen HT");
     EffHT->GetYaxis()->SetTitle("Efficiency");
     EffHT->Draw("APL");
-    EffHT->Write("HT");
+    //EffHT->Write("HT");
     c2->SaveAs("HTEff.png");
     
     TCanvas *c3 = new TCanvas();
@@ -156,7 +154,7 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
     EffMET->GetYaxis()->SetTitle("Efficiency");
     EffMET->Draw("APL");
     
-    EffMET->Write("MET");
+    //EffMET->Write("MET");
     c3->SaveAs("METEff.png");
     
     TCanvas *c4 = new TCanvas();
@@ -172,7 +170,7 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
     EffJetReco->GetYaxis()->SetTitle("Efficiency");
     EffJetReco->Draw("APL");
     
-    EffJetReco->Write("JetReco");
+    //EffJetReco->Write("JetReco");
     c4->SaveAs("JetRecoEff.png");
     
     
@@ -192,9 +190,7 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
     EffMuon->GetYaxis()->SetTitle("Efficiency");
     EffMuon->Draw("APL");
     EffElectron->Draw("same");
-    
-    //  EffMuon->Write("Muon");
-    
+     
     c5->SaveAs("LeptonEff.png");
     
     
@@ -207,8 +203,11 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
     delete c3;
     delete c4;
     delete c5;
-    
+
+    cout<<""<<endl;
     cout << "END   Finalization" << endl;
+    cout<<""<<endl;
+
 }
 
 
@@ -222,7 +221,8 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
      {
          dBTagEff = 1;
          dLeptonEff = 1;
-         
+         dHTcount = 0;
+
          double myEventWeight;
          if(Configuration().IsNoEventWeight()) myEventWeight=1.;
          else if(event.mc()->weight()!=0.) myEventWeight = event.mc()->weight();
@@ -243,6 +243,8 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          
          PHYSICS->mcConfig().AddHadronicId(5);  //identifying bjets as hadronic
          PHYSICS->mcConfig().AddHadronicId(21);  //identifying jets as hadronic
+         PHYSICS->mcConfig().AddHadronicId(15); //hadronically decaying taus
+         PHYSICS->mcConfig().AddHadronicId(-15); //hadronically decaying anti-taus
          PHYSICS->mcConfig().AddInvisibleId(12); //identifying met as invisible
 
          for (unsigned int i=0;i<event.mc()->particles().size();i++)
@@ -255,6 +257,7 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
              //---------------------------------------------------------------------------------------------//
 
              if(part->statuscode() != 1) continue; //ie. skip if not a final state particle
+             if(part->pdgid() == 15 || part->pdgid() == -15 ){ /*cout<<"!!!!!!!!  TAU !!!!!!!"<<endl;*/}
              if(part->pdgid() == 11) {
                  if(std::abs(part->momentum().Eta())<2.5) electrons.push_back(part);
              }
@@ -286,8 +289,11 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
              if(part->pdgid() == -11 || part->pdgid() == -13) {
                  if(std::abs(part->momentum().Eta())<2.5) posileptons.push_back(part); //Positive leptons
              }
+             if(part->pdgid() == 5 || part->pdgid() == 21 || part->pdgid() == 15 ||part->pdgid() == -15){
+                dHTcount += part->momentum().Pt();
+             }
+
          }
-         
          //---------------------------------------------------------------------------------------------//
          //-----------------------Apply baseline cuts 2 same sign leptons-------------------------------//
          //---------------------------------------------------------------------------------------------//
@@ -329,6 +335,9 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          
          dMETEff = dFunctionMET(event.mc()->MET().pt(), "SR28");
          dHTEff = dFunctionHT(event.mc()->THT(), "SR28");
+         //cout<<" total HT = "<<dHTcount<<endl;
+
+         //cout<<"HT: "<<event.mc()->THT()<<endl;
 
          dLeptonEff = dFunctionTotalLepton(posileptons, negaleptons);
 

@@ -62,38 +62,32 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
     
     //////// Plotting efficiency curves /////////
     
-    for (int i=0; i<=800; i+=20)
-    {
+    for (int i=0; i<=800; i+=20){
         vecHT.push_back((double)i);
         vecHTEff.push_back(dFunctionHT((double)i, "SR28"));
     }
     
-    for (int i=0; i<=200; i+=5)
-    {
+    for (int i=0; i<=200; i+=5){
         vecMET.push_back((double)i);
         vecMETEff.push_back(dFunctionMET((double)i, "SR28"));
     }
     
-    for (int i=0; i<=100; i+=2)
-    {
+    for (int i=0; i<=100; i+=2){
         vecJetReco.push_back((double)i);
         vecJetRecoEff.push_back(dFunctionJetReco((double)i, "SR28"));
     }
     
-    for (int i=0; i<601; i+=2)
-    {
+    for (int i=0; i<601; i+=2){
         vecBTag.push_back((double)i);
         vecBTagEff.push_back(dFunctionBTag((double)i, "SR28"));
     }
     
-    for (int i=10; i<120; i+=5)
-    {
+    for (int i=10; i<120; i+=5){
         vecMuon.push_back((double)i);
         vecMuonEff.push_back(dFunctionLepton((double)i, 13, "SR28"));
     }
 
-    for (int i=10; i<120; i+=5)
-    {
+    for (int i=10; i<120; i+=5){
         vecElectron.push_back((double)i);
         vecElectronEff.push_back(dFunctionLepton((double)i, 11, "SR28"));
     }
@@ -296,14 +290,14 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          //---------------------------------------------------------------------------------------------//
  
          VETObool=true;
-         if( leptons.size() > 2 ){
-             bool negabool = dFunctionVETO(negaleptons, posileptons); //two SS negative leptons with pT>20, check positive leptons with no pT cut
-             bool posibool = dFunctionVETO(posileptons, negaleptons); //two SS positive leptons with pT>20, check negative leptons with no pT cut
-             
-             if( negabool == true || posibool == true){
-                 VETObool = false; //if the veto criteria are satisified the event does not pass the selection
-             }
+
+         bool negabool = dFunctionVETO(negaleptons, posileptons); //two SS negative leptons with pT>20, check positive leptons with no pT cut
+         bool posibool = dFunctionVETO(posileptons, negaleptons); //two SS positive leptons with pT>20, check negative leptons with no pT cut
+
+         if( negabool == true || posibool == true){
+             VETObool = false; //if the veto criteria are satisified the event does not pass the selection
          }
+
          if ( !Manager()->ApplyCut( VETObool,"3rd lepton veto")) return true;
 
          //---------------------------------------------------------------------------------------------//
@@ -323,7 +317,7 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          dSelectionEff = dHTEff * dMETEff * dBTagEff * dLeptonEff;
 
          dCounterSelectionEff += dSelectionEff;
-         dCounterPassedEvents +=1;
+         dCounterPassedEvents +=1.;
 
          return true;
      }//end of event.mc()

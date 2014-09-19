@@ -62,57 +62,40 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
     
     //////// Plotting efficiency curves /////////
     
-    double fauxHT, fauxHTEff;
     for (int i=0; i<=800; i+=20)
     {
-        fauxHT = (double)i;
-        fauxHTEff = dFunctionHT(fauxHT, "SR28");
-        vecHT.push_back(fauxHT);
-        vecHTEff.push_back(fauxHTEff);
+        vecHT.push_back((double)i);
+        vecHTEff.push_back(dFunctionHT((double)i, "SR28"));
     }
     
-    double fauxMET, fauxMETEff;
     for (int i=0; i<=200; i+=5)
     {
-        fauxMET = (double)i;
-        fauxMETEff = dFunctionMET(fauxMET, "SR28");
-        vecMET.push_back(fauxMET);
-        vecMETEff.push_back(fauxMETEff);
+        vecMET.push_back((double)i);
+        vecMETEff.push_back(dFunctionMET((double)i, "SR28"));
     }
     
-    double fauxJetReco, fauxJetRecoEff;
     for (int i=0; i<=100; i+=2)
     {
-        fauxJetReco = (double)i;
-        fauxJetRecoEff = dFunctionJetReco(fauxJetReco, "SR28");
-        vecJetReco.push_back(fauxJetReco);
-        vecJetRecoEff.push_back(fauxJetRecoEff);
+        vecJetReco.push_back((double)i);
+        vecJetRecoEff.push_back(dFunctionJetReco((double)i, "SR28"));
     }
     
-    double fauxBTag, fauxBTagEff;
     for (int i=0; i<601; i+=2)
     {
-        fauxBTag = (double)i;
-        fauxBTagEff = dFunctionBTag(fauxBTag, "SR28");
-        vecBTag.push_back(fauxBTag);
-        vecBTagEff.push_back(fauxBTagEff);
+        vecBTag.push_back((double)i);
+        vecBTagEff.push_back(dFunctionBTag((double)i, "SR28"));
     }
     
-    double fauxMuon, fauxMuonEff;
     for (int i=10; i<120; i+=5)
     {
-        fauxMuon = (double)i;
-        fauxMuonEff = dFunctionLepton(fauxMuon, 13, "SR28");
-        vecMuon.push_back(fauxMuon);
-        vecMuonEff.push_back(fauxMuonEff);
+        vecMuon.push_back((double)i);
+        vecMuonEff.push_back(dFunctionLepton((double)i, 13, "SR28"));
     }
-    double fauxElectron, fauxElectronEff;
+
     for (int i=10; i<120; i+=5)
     {
-        fauxElectron = (double)i;
-        fauxElectronEff = dFunctionLepton(fauxElectron, 11, "SR28");
-        vecElectron.push_back(fauxElectron);
-        vecElectronEff.push_back(fauxElectronEff);
+        vecElectron.push_back((double)i);
+        vecElectronEff.push_back(dFunctionLepton((double)i, 11, "SR28"));
     }
 
     TCanvas *c1 = new TCanvas();
@@ -127,7 +110,6 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
     EffBTag->GetXaxis()->SetTitle("gen Jet PT");
     EffBTag->GetYaxis()->SetTitle("Efficiency");
     EffBTag->Draw("APL");
-    //EffBTag->Write("BTag");
     c1->SaveAs("BTagEff.png");
     
     TCanvas *c2 = new TCanvas();
@@ -140,7 +122,6 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
     EffHT->GetXaxis()->SetTitle("gen HT");
     EffHT->GetYaxis()->SetTitle("Efficiency");
     EffHT->Draw("APL");
-    //EffHT->Write("HT");
     c2->SaveAs("HTEff.png");
     
     TCanvas *c3 = new TCanvas();
@@ -154,7 +135,6 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
     EffMET->GetYaxis()->SetTitle("Efficiency");
     EffMET->Draw("APL");
     
-    //EffMET->Write("MET");
     c3->SaveAs("METEff.png");
     
     TCanvas *c4 = new TCanvas();
@@ -170,7 +150,6 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
     EffJetReco->GetYaxis()->SetTitle("Efficiency");
     EffJetReco->Draw("APL");
     
-    //EffJetReco->Write("JetReco");
     c4->SaveAs("JetRecoEff.png");
     
     
@@ -219,8 +198,6 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
 {
     if (event.mc() !=0)
      {
-         dBTagEff = 1;
-         dLeptonEff = 1;
          dHTcount = 0;
 
          double myEventWeight;
@@ -241,9 +218,9 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          std::vector<const MCParticleFormat*> posileptons; //positrons and antimuons
          std::vector<const MCParticleFormat*> negaleptons; //electrons and muons
          
-         PHYSICS->mcConfig().AddHadronicId(5);  //identifying bjets as hadronic
+         PHYSICS->mcConfig().AddHadronicId(5);   //identifying bjets as hadronic
          PHYSICS->mcConfig().AddHadronicId(21);  //identifying jets as hadronic
-         PHYSICS->mcConfig().AddHadronicId(15); //hadronically decaying taus
+         PHYSICS->mcConfig().AddHadronicId(15);  //hadronically decaying taus
          PHYSICS->mcConfig().AddHadronicId(-15); //hadronically decaying anti-taus
          PHYSICS->mcConfig().AddInvisibleId(12); //identifying met as invisible
 
@@ -478,9 +455,6 @@ bool CMS_SUS_13_013::dFunctionVETO(std::vector<const MCParticleFormat*> leptons1
 }
 
 
-
-
-
 double CMS_SUS_13_013::dFunctionTotalLepton(std::vector<const MCParticleFormat*> posileptons, std::vector<const MCParticleFormat*> negaleptons){
 
     double w_0pairs;
@@ -558,41 +532,4 @@ double CMS_SUS_13_013::dFunctionGE2(std::string particleType, std::vector<const 
         
     return w_GE2;
 }
-
-
-/*  //OLD BTAG FUNCTION
- double CMS_SUS_13_013::dFunctionTotalBTag(std::vector<const MCParticleFormat*> btagsvec){
- double w_0bTags = 1;
- double w_1bTag = 0;
- double product;
- // cout<<"NEW event"<<endl;
- 
- for (int i=0; i<btagsvec.size();i++){
- double totalbTag_i = dFunctionJetReco(btagsvec[i]->momentum().Pt(), "SR28") * dFunctionBTag(btagsvec[i]->momentum().Pt(), "SR28");
- if ( dFunctionBTag(btagsvec[i]->momentum().Pt(), "SR28") < 0){
- totalbTag_i = 0;
- }
- w_0bTags *= (1 - totalbTag_i);
- //cout<<"jet reco eff "<<dFunctionJetReco(btagsvec[i]->momentum().Pt(), "SR28")<<"  btag"<<dFunctionBTag(btagsvec[i]->momentum().Pt(), "SR28")<<endl;
- 
- product = totalbTag_i;
- for(int j=0; j<btagsvec.size(); j++){
- if (j == i){continue;}
- else{
- double totalbTag_j = dFunctionJetReco(btagsvec[j]->momentum().Pt(), "SR28") * dFunctionBTag(btagsvec[j]->momentum().Pt(), "SR28");
- if (dFunctionBTag(btagsvec[j]->momentum().Pt(), "SR28") < 0){
- totalbTag_j = 0;
- }
- product *= (1 - totalbTag_j);
- }
- }
- w_1bTag += product;
- 
- }
- double w_GreaterEqual2 = 1 - w_0bTags - w_1bTag;
- 
- cout<<"  w_0b: "<<w_0bTags<<"   w_1b: "<<w_1bTag<<endl;
- return w_GreaterEqual2;
- }
- */
 

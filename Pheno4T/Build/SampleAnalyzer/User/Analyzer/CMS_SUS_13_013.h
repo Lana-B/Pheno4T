@@ -21,7 +21,9 @@ namespace MA5
         double dFunctionBTag(double dGenJetPt, std::string SearchReg); //function for calculating BTag efficiency
         double dFunctionJetReco(double dGenJetPt, std::string SearchReg); //function for calculating BTag efficiency
         double dFunctionTotalBTag(std::vector<const MCParticleFormat*> btagsvec);
-     
+        double dFunctionGE2(std::string particleType, std::vector<const MCParticleFormat*> vec_particles);
+        double dFunctionBTagCombined(double dGenJetPt, std::string SearchReg);
+        double dFunctionTotalLepton(std::vector<const MCParticleFormat*> posileptons, std::vector<const MCParticleFormat*> negaleptons);
         bool dFunctionVETO(std::vector<const MCParticleFormat*> leptons1, std::vector<const MCParticleFormat*> leptons2);
 
         std::vector<double> vecMET;
@@ -43,6 +45,7 @@ namespace MA5
         double dMETEff;
         double dBTagEff;
         
+        double dCounterPassedEvents;
         double dCounterSelectionEff;
         
         bool VETObool;

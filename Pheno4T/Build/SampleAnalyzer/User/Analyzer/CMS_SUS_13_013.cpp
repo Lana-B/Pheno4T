@@ -35,6 +35,7 @@ bool CMS_SUS_13_013::Initialize(const MA5::Configuration& cfg, const std::map<st
     dCounterSelectionEff = 0;
     dCounterPassedEvents = 0;
     dHTcount = 0.;
+    Wcount = 0;
     
     cout << "END   Initialization" << endl;
     cout<<""<<endl;
@@ -193,7 +194,7 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
     if (event.mc() !=0)
      {
          dHTcount = 0;
-
+         Wcount = 0;
          double myEventWeight;
          if(Configuration().IsNoEventWeight()) myEventWeight=1.;
          else if(event.mc()->weight()!=0.) myEventWeight = event.mc()->weight();
@@ -207,10 +208,7 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          
          //cout << "---------------NEW EVENT-------------------" << endl;
 
-         std::vector<const MCParticleFormat*> electrons, muons, positrons, antimuons, jets, btags, MCMET;
-         std::vector<const MCParticleFormat*> leptons; //electrons and muons of either charge
-         std::vector<const MCParticleFormat*> posileptons; //positrons and antimuons
-         std::vector<const MCParticleFormat*> negaleptons; //electrons and muons
+
          
          PHYSICS->mcConfig().AddHadronicId(5);   //identifying bjets as hadronic
          PHYSICS->mcConfig().AddHadronicId(21);  //identifying jets as hadronic
@@ -222,9 +220,17 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          {
              const MCParticleFormat* part = &event.mc()->particles()[i];
 
+             if(part->statuscode() == 3 && std::abs(part->pdgid())==24){
+                std::vector<MCParticleFormat*> Wdaughters = part->daughters();
+                Wcount+=1;
+                for(int kk=0; kk<Wdaughters.size(); kk++){
+                    cout<<"daughter of W flavour "<<Wdaughters[kk]->pdgid()<<endl;
+                }
+             }
+
              
              //---------------------------------------------------------------------------------------------//
-             //-------------------------------Add particles to vector collections----------------------------//
+             //-------------------------------Add particles to vector collections---------------------------//
              //---------------------------------------------------------------------------------------------//
 
              if(part->statuscode() != 1) continue; //ie. skip if not a final state particle
@@ -265,10 +271,25 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
              }
 
          }
+
+
+         if(Wcount != 4){
+            cout<<"TOO MANY........W count = "<<Wcount<<endl;
+
+         }
          //---------------------------------------------------------------------------------------------//
          //-----------------------Apply baseline cuts 2 same sign leptons-------------------------------//
          //---------------------------------------------------------------------------------------------//
-         if ( !Manager()->ApplyCut( (leptons.size() > 1),"2 leptons")) return true; //there are at least 2 leptons with pt>20 |eta|>2.5
+/*
+         if(jets.size()<1){
+            cout<<"NO JETS !!!!!!!!!"<<endl;
+         }
+
+         else{
+            std::vector<const MCParticleFormat*> mothers = jets[0]->mothers();
+         }
+*/
+         if ( !Manager()->ApplyCut( (leptons.size() > 1),"2 leptons")) return true; //there are at least 2 leptons with pt>20 |eta|>2.5       
 
          bool SSlep = false;
          if(posileptons.size() > 1 || negaleptons.size() > 1){

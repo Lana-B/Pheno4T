@@ -208,7 +208,10 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          
          //cout << "---------------NEW EVENT-------------------" << endl;
 
-
+         std::vector<const MCParticleFormat*> electrons, muons, positrons, antimuons, jets, btags, MCMET;
+         std::vector<const MCParticleFormat*> leptons; //electrons and muons of either charge
+         std::vector<const MCParticleFormat*> posileptons; //positrons and antimuons
+         std::vector<const MCParticleFormat*> negaleptons; //electrons and muons
          
          PHYSICS->mcConfig().AddHadronicId(5);   //identifying bjets as hadronic
          PHYSICS->mcConfig().AddHadronicId(21);  //identifying jets as hadronic
@@ -224,7 +227,7 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
                 std::vector<MCParticleFormat*> Wdaughters = part->daughters();
                 Wcount+=1;
                 for(int kk=0; kk<Wdaughters.size(); kk++){
-                    cout<<"daughter of W flavour "<<Wdaughters[kk]->pdgid()<<endl;
+                   // cout<<"daughter of W flavour "<<Wdaughters[kk]->pdgid()<<endl;
                 }
              }
 

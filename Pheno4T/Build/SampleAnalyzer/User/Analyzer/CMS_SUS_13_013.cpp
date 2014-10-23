@@ -212,6 +212,7 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          std::vector<const MCParticleFormat*> leptons; //electrons and muons of either charge
          std::vector<const MCParticleFormat*> posileptons; //positrons and antimuons
          std::vector<const MCParticleFormat*> negaleptons; //electrons and muons
+         std::vector<const MCParticleFormat*> lightsnbs; //lights and bs
          
          PHYSICS->mcConfig().AddHadronicId(5);   //identifying bjets as hadronic
          PHYSICS->mcConfig().AddHadronicId(21);  //identifying jets as hadronic
@@ -239,25 +240,22 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
              if(part->statuscode() != 1) continue; //ie. skip if not a final state particle
              if(part->pdgid() == 15 || part->pdgid() == -15 ){ /*cout<<"!!!!!!!!  TAU !!!!!!!"<<endl;*/}
              if(part->pdgid() == 11) {
-                 if(std::abs(part->momentum().Eta())<2.5) electrons.push_back(part);
+                if(std::abs(part->momentum().Eta())<2.5) electrons.push_back(part);
              }
              else if(part->pdgid() == 13) {
-                 if(std::abs(part->momentum().Eta())<2.5) muons.push_back(part);
+                if(std::abs(part->momentum().Eta())<2.5) muons.push_back(part);
              }
              else if(part->pdgid() == -11) {
-                 if(std::abs(part->momentum().Eta())<2.5) positrons.push_back(part);
+                if(std::abs(part->momentum().Eta())<2.5) positrons.push_back(part);
              }
              else if(part->pdgid() == -13) {
-                 if(std::abs(part->momentum().Eta())<2.5) antimuons.push_back(part);
+                if(std::abs(part->momentum().Eta())<2.5) antimuons.push_back(part);
              }
              else if(std::abs(part->pdgid()) == 5) {
-                 if(std::abs(part->momentum().Eta())<2.5) btags.push_back(part);
-             }
-             else if(std::abs(part->pdgid()) == 21) {
-                 if(std::abs(part->momentum().Eta())<2.5) jets.push_back(part);
+                if(std::abs(part->momentum().Eta())<2.5) btags.push_back(part);
              }
              else if(std::abs(part->pdgid()) == 12) {
-                 MCMET.push_back(part);
+                MCMET.push_back(part);
              }
              
              if(std::abs(part->pdgid()) == 11 || std::abs(part->pdgid()) == 13) {
@@ -271,6 +269,12 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
              }
              if(part->pdgid() == 5 || part->pdgid() == 21 || part->pdgid() == 15 ||part->pdgid() == -15){
                 dHTcount += part->momentum().Pt();
+             }
+             if(std::abs(part->pdgid()) == 21 || std::abs(part->pdgid()) == 5) {
+                 if(std::abs(part->momentum().Eta())<2.5) lightsnbs.push_back(part);
+             }
+             if(std::abs(part->pdgid()) == 21 || std::abs(part->pdgid()) == 5 || std::abs(part->pdgid()) == 15) {
+                if(std::abs(part->momentum().Eta())<2.5) jets.push_back(part);
              }
 
          }
@@ -304,7 +308,7 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          //---------------------------------Making selection region cuts--------------------------------//
          //---------------------------------------------------------------------------------------------//
          if( !Manager()->ApplyCut((jets.size() > 3), "Njets>=4"))  return true;
-         if( !Manager()->ApplyCut((btags.size() > 1), "NBjets>=2"))  return true;
+         //if( !Manager()->ApplyCut((btags.size() > 1), "NBjets>=2"))  return true;
 
 
          //---------------------------------------------------------------------------------------------//
@@ -336,7 +340,11 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
 
          dLeptonEff = dFunctionTotalLepton(posileptons, negaleptons);
 
-         dBTagEff = dFunctionTotalBTag(btags);
+         dBTagEff = dFunctionTotalBTag(lightsnbs);
+         //cout<<"    lightsnbs:  "<<dBTagEff<<endl;
+         //cout<<""<<endl;
+         //dBTagEff = dFunctionTotalBTag(btags);
+         //cout<<"bs only: "<<dbsonly<<endl;
 
          dSelectionEff = dHTEff * dMETEff * dBTagEff * dLeptonEff;
 
@@ -442,9 +450,9 @@ double CMS_SUS_13_013::dFunctionBTagCombined(double dGenJetPt, std::string Searc
     return Combined;
 }
 
-double CMS_SUS_13_013::dFunctionTotalBTag(std::vector<const MCParticleFormat*> btagsvec){
+double CMS_SUS_13_013::dFunctionTotalBTag(std::vector<const MCParticleFormat*> lightsnbs){
     ///////efficiency for >= 2 reco level btags to be found given there are n gen level bjets
-    double total = dFunctionGE2("b", btagsvec);
+    double total = dFunctionGE2("b", lightsnbs);
     return total;
 }
 
@@ -509,7 +517,12 @@ double CMS_SUS_13_013::dFunctionGE2(std::string particleType, std::vector<const 
         
         for (int i =0; i<vec_particles.size(); i++){
             if (particleType == "b"){
-                eff_i = dFunctionBTagCombined(vec_particles[i]->momentum().Pt(), "SR28");
+                if(vec_particles[i]->pdgid() == 5){
+                    eff_i = dFunctionBTagCombined(vec_particles[i]->momentum().Pt(), "SR28");
+                }
+                else if(vec_particles[i]->pdgid() ==21){
+                    eff_i = 0.01;
+                }
             }
             else if ( particleType == "lepton" ){
                 eff_i = dFunctionLepton( vec_particles[i]->momentum().Pt(), vec_particles[i]->pdgid(), "SR28");
@@ -520,7 +533,7 @@ double CMS_SUS_13_013::dFunctionGE2(std::string particleType, std::vector<const 
             if (eff_i < 0){
                 eff_i = 0;
             }
-            
+            //cout<<" i: "<<i<<"  pdgid: "<<vec_particles[i]->pdgid()<<"   eff: "<<eff_i<<endl;
             w_0bTags *= (1 - eff_i);
             
             product = eff_i;
@@ -528,7 +541,12 @@ double CMS_SUS_13_013::dFunctionGE2(std::string particleType, std::vector<const 
                 if (j == i){continue;}
                 else{
                     if ( particleType == "b"){
-                        eff_j = dFunctionBTagCombined(vec_particles[j]->momentum().Pt(), "SR28");
+                        if(vec_particles[j]->pdgid() == 5){
+                            eff_j = dFunctionBTagCombined(vec_particles[j]->momentum().Pt(), "SR28");
+                        }
+                        else if (vec_particles[j]->pdgid() ==21){
+                            eff_j = 0.01;
+                        }
                     }
                     else if ( particleType == "lepton" ){
                         eff_j = dFunctionLepton( vec_particles[j]->momentum().Pt(), vec_particles[j]->pdgid(), "SR28");
@@ -540,12 +558,13 @@ double CMS_SUS_13_013::dFunctionGE2(std::string particleType, std::vector<const 
                         eff_j = 0;
                     }
                     product *= ( 1 - eff_j );
+                        //cout<<" j: "<<j<<"  pdgid: "<<vec_particles[j]->pdgid()<<"   eff: "<<eff_j<<endl;
                 }
             }//end of j for loop
             w_1bTag += product;
         }//end of i for loop
-
         w_GE2 = 1 - w_0bTags - w_1bTag;
+        //cout<<"w0: "<<w_0bTags<<"  w1: "<<w_1bTag<<"  w_GE2: "<<w_GE2<<endl;
     }
         
     return w_GE2;

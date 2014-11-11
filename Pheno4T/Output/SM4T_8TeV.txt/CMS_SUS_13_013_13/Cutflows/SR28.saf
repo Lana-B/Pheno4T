@@ -1,0 +1,47 @@
+<SAFheader>
+</SAFheader>
+
+<InitialCounter>
+"Initial number of events"      #
+10000           0               # nentries
+1.000000e+04    0.000000e+00    # sum of weights
+1.000000e+04    0.000000e+00    # sum of weights^2
+</InitialCounter>
+
+<Counter>
+"2 leptons"                     # 1st cut
+2540            0               # nentries
+2.540000e+03    0.000000e+00    # sum of weights
+2.540000e+03    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"same sign leptons"             # 2st cut
+1168            0               # nentries
+1.168000e+03    0.000000e+00    # sum of weights
+1.168000e+03    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"Njets>=4"                      # 3st cut
+991             0               # nentries
+9.910000e+02    0.000000e+00    # sum of weights
+9.910000e+02    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"NBjets>=2"                     # 4st cut
+990             0               # nentries
+9.900000e+02    0.000000e+00    # sum of weights
+9.900000e+02    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"3rd lepton veto"               # 5st cut
+930             0               # nentries
+9.300000e+02    0.000000e+00    # sum of weights
+9.300000e+02    0.000000e+00    # sum of weights^2
+</Counter>
+
+<SAFfooter>
+</SAFfooter>

@@ -1,0 +1,17 @@
+g++ -Wall -O3 -fPIC -I/Users/lb8075/madanalysis5/tools/ -pthread -stdlib=libc++ -m64 -I/Users/lb8075/SecondRoot/root/include -DROOT_USE -o Base/Configuration.o -c Base/Configuration.cpp
+g++ -Wall -O3 -fPIC -I/Users/lb8075/madanalysis5/tools/ -pthread -stdlib=libc++ -m64 -I/Users/lb8075/SecondRoot/root/include -DROOT_USE -o Base/TaggerBase.o -c Base/TaggerBase.cpp
+g++ -Wall -O3 -fPIC -I/Users/lb8075/madanalysis5/tools/ -pthread -stdlib=libc++ -m64 -I/Users/lb8075/SecondRoot/root/include -DROOT_USE -o Base/TestBase.o -c Base/TestBase.cpp
+g++ -Wall -O3 -fPIC -I/Users/lb8075/madanalysis5/tools/ -pthread -stdlib=libc++ -m64 -I/Users/lb8075/SecondRoot/root/include -DROOT_USE -o DataFormat/PdgDataFormat.o -c DataFormat/PdgDataFormat.cpp
+g++ -Wall -O3 -fPIC -I/Users/lb8075/madanalysis5/tools/ -pthread -stdlib=libc++ -m64 -I/Users/lb8075/SecondRoot/root/include -DROOT_USE -o DataFormat/PdgTable.o -c DataFormat/PdgTable.cpp
+g++ -Wall -O3 -fPIC -I/Users/lb8075/madanalysis5/tools/ -pthread -stdlib=libc++ -m64 -I/Users/lb8075/SecondRoot/root/include -DROOT_USE -o Service/ConvertService.o -c Service/ConvertService.cpp
+g++ -Wall -O3 -fPIC -I/Users/lb8075/madanalysis5/tools/ -pthread -stdlib=libc++ -m64 -I/Users/lb8075/SecondRoot/root/include -DROOT_USE -o Service/DisplayService.o -c Service/DisplayService.cpp
+g++ -Wall -O3 -fPIC -I/Users/lb8075/madanalysis5/tools/ -pthread -stdlib=libc++ -m64 -I/Users/lb8075/SecondRoot/root/include -DROOT_USE -o Service/ExceptionService.o -c Service/ExceptionService.cpp
+g++ -Wall -O3 -fPIC -I/Users/lb8075/madanalysis5/tools/ -pthread -stdlib=libc++ -m64 -I/Users/lb8075/SecondRoot/root/include -DROOT_USE -o Service/LogReport.o -c Service/LogReport.cpp
+g++ -Wall -O3 -fPIC -I/Users/lb8075/madanalysis5/tools/ -pthread -stdlib=libc++ -m64 -I/Users/lb8075/SecondRoot/root/include -DROOT_USE -o Service/LogService.o -c Service/LogService.cpp
+g++ -Wall -O3 -fPIC -I/Users/lb8075/madanalysis5/tools/ -pthread -stdlib=libc++ -m64 -I/Users/lb8075/SecondRoot/root/include -DROOT_USE -o Service/LogStream.o -c Service/LogStream.cpp
+g++ -Wall -O3 -fPIC -I/Users/lb8075/madanalysis5/tools/ -pthread -stdlib=libc++ -m64 -I/Users/lb8075/SecondRoot/root/include -DROOT_USE -o Service/LoopService.o -c Service/LoopService.cpp
+g++ -Wall -O3 -fPIC -I/Users/lb8075/madanalysis5/tools/ -pthread -stdlib=libc++ -m64 -I/Users/lb8075/SecondRoot/root/include -DROOT_USE -o Service/PDGService.o -c Service/PDGService.cpp
+g++ -Wall -O3 -fPIC -I/Users/lb8075/madanalysis5/tools/ -pthread -stdlib=libc++ -m64 -I/Users/lb8075/SecondRoot/root/include -DROOT_USE -o Service/Physics.o -c Service/Physics.cpp
+g++ -Wall -O3 -fPIC -I/Users/lb8075/madanalysis5/tools/ -pthread -stdlib=libc++ -m64 -I/Users/lb8075/SecondRoot/root/include -DROOT_USE -o Service/SortingService.o -c Service/SortingService.cpp
+g++ -Wall -O3 -fPIC -I/Users/lb8075/madanalysis5/tools/ -pthread -stdlib=libc++ -m64 -I/Users/lb8075/SecondRoot/root/include -DROOT_USE -o Service/TimeService.o -c Service/TimeService.cpp
+g++ -Wall -O3 -fPIC -I/Users/lb8075/madanalysis5/tools/ -pthread -stdlib=libc++ -m64 -I/Users/lb8075/SecondRoot/root/include -DROOT_USE -o Service/TransverseVariables.o -c Service/TransverseVariables.cpp

@@ -1,0 +1,88 @@
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C ConstituentSubtractor
+make[1]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C EnergyCorrelator
+make[1]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C GenericSubtractor
+make[1]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C JetCleanser
+make[1]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C JetFFMoments
+make[1]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C JetsWithoutJets
+make[1]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C Nsubjettiness
+make[1]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C ScJet
+make[1]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C SubjetCounting
+make[1]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C VariableR
+make[1]: Nothing to be done for `all'.
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C ConstituentSubtractor install
+/bin/sh ../utils/install-sh -d /Users/lb8075/madanalysis5/tools/fastjet/include/fastjet/contrib
+for header in ConstituentSubtractor.hh; do\
+	  /bin/sh ../utils/install-sh -c -m 644 $header /Users/lb8075/madanalysis5/tools/fastjet/include/fastjet/contrib/;\
+	done
+/bin/sh ../utils/install-sh -d /Users/lb8075/madanalysis5/tools/fastjet/lib
+/bin/sh ../utils/install-sh -c -m 644 libConstituentSubtractor.a /Users/lb8075/madanalysis5/tools/fastjet/lib
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C EnergyCorrelator install
+/bin/sh ../utils/install-sh -d /Users/lb8075/madanalysis5/tools/fastjet/include/fastjet/contrib
+for header in EnergyCorrelator.hh; do\
+	  /bin/sh ../utils/install-sh -c -m 644 $header /Users/lb8075/madanalysis5/tools/fastjet/include/fastjet/contrib/;\
+	done
+/bin/sh ../utils/install-sh -d /Users/lb8075/madanalysis5/tools/fastjet/lib
+/bin/sh ../utils/install-sh -c -m 644 libEnergyCorrelator.a /Users/lb8075/madanalysis5/tools/fastjet/lib
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C GenericSubtractor install
+/bin/sh ../utils/install-sh -d /Users/lb8075/madanalysis5/tools/fastjet/include/fastjet/contrib
+for header in GenericSubtractor.hh ShapeWithPartition.hh ShapeWithComponents.hh; do\
+	  /bin/sh ../utils/install-sh -c -m 644 $header /Users/lb8075/madanalysis5/tools/fastjet/include/fastjet/contrib/;\
+	done
+/bin/sh ../utils/install-sh -d /Users/lb8075/madanalysis5/tools/fastjet/lib
+/bin/sh ../utils/install-sh -c -m 644 libGenericSubtractor.a /Users/lb8075/madanalysis5/tools/fastjet/lib
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C JetCleanser install
+/bin/sh ../utils/install-sh -d /Users/lb8075/madanalysis5/tools/fastjet/include/fastjet/contrib
+for header in JetCleanser.hh; do\
+	  /bin/sh ../utils/install-sh -c -m 644 $header /Users/lb8075/madanalysis5/tools/fastjet/include/fastjet/contrib/;\
+	done
+/bin/sh ../utils/install-sh -d /Users/lb8075/madanalysis5/tools/fastjet/lib
+/bin/sh ../utils/install-sh -c -m 644 libJetCleanser.a /Users/lb8075/madanalysis5/tools/fastjet/lib
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C JetFFMoments install
+/bin/sh ../utils/install-sh -d /Users/lb8075/madanalysis5/tools/fastjet/include/fastjet/contrib
+/bin/sh ../utils/install-sh -c -m 644 JetFFMoments.hh /Users/lb8075/madanalysis5/tools/fastjet/include/fastjet/contrib
+/bin/sh ../utils/install-sh -d /Users/lb8075/madanalysis5/tools/fastjet/lib
+/bin/sh ../utils/install-sh -c -m 644 libJetFFMoments.a /Users/lb8075/madanalysis5/tools/fastjet/lib
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C JetsWithoutJets install
+/bin/sh ../utils/install-sh -d /Users/lb8075/madanalysis5/tools/fastjet/include/fastjet/contrib
+for header in JetsWithoutJets.hh EventStorage.hh; do\
+	  /bin/sh ../utils/install-sh -c -m 644 $header /Users/lb8075/madanalysis5/tools/fastjet/include/fastjet/contrib/;\
+	done
+/bin/sh ../utils/install-sh -d /Users/lb8075/madanalysis5/tools/fastjet/lib
+/bin/sh ../utils/install-sh -c -m 644 libJetsWithoutJets.a /Users/lb8075/madanalysis5/tools/fastjet/lib
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C Nsubjettiness install
+/bin/sh ../utils/install-sh -d /Users/lb8075/madanalysis5/tools/fastjet/include/fastjet/contrib
+for header in Nsubjettiness.hh Njettiness.hh NjettinessPlugin.hh; do\
+	  /bin/sh ../utils/install-sh -c -m 644 $header /Users/lb8075/madanalysis5/tools/fastjet/include/fastjet/contrib/;\
+	done
+/bin/sh ../utils/install-sh -d /Users/lb8075/madanalysis5/tools/fastjet/lib
+/bin/sh ../utils/install-sh -c -m 644 libNsubjettiness.a /Users/lb8075/madanalysis5/tools/fastjet/lib
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C ScJet install
+/bin/sh ../utils/install-sh -d /Users/lb8075/madanalysis5/tools/fastjet/include/fastjet/contrib
+for header in ScJet.hh; do\
+	  /bin/sh ../utils/install-sh -c -m 644 $header /Users/lb8075/madanalysis5/tools/fastjet/include/fastjet/contrib/;\
+	done
+/bin/sh ../utils/install-sh -d /Users/lb8075/madanalysis5/tools/fastjet/lib
+/bin/sh ../utils/install-sh -c -m 644 libScJet.a /Users/lb8075/madanalysis5/tools/fastjet/lib
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C SubjetCounting install
+/bin/sh ../utils/install-sh -d /Users/lb8075/madanalysis5/tools/fastjet/include/fastjet/contrib
+for header in SubjetCounting.hh; do\
+	  /bin/sh ../utils/install-sh -c -m 644 $header /Users/lb8075/madanalysis5/tools/fastjet/include/fastjet/contrib/;\
+	done
+/bin/sh ../utils/install-sh -d /Users/lb8075/madanalysis5/tools/fastjet/lib
+/bin/sh ../utils/install-sh -c -m 644 libSubjetCounting.a /Users/lb8075/madanalysis5/tools/fastjet/lib
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C VariableR install
+/bin/sh ../utils/install-sh -d /Users/lb8075/madanalysis5/tools/fastjet/include/fastjet/contrib
+for header in VariableR.hh VariableRPlugin.hh; do\
+	  /bin/sh ../utils/install-sh -c -m 644 $header /Users/lb8075/madanalysis5/tools/fastjet/include/fastjet/contrib/;\
+	done
+/bin/sh ../utils/install-sh -d /Users/lb8075/madanalysis5/tools/fastjet/lib
+/bin/sh ../utils/install-sh -c -m 644 libVariableR.a /Users/lb8075/madanalysis5/tools/fastjet/lib

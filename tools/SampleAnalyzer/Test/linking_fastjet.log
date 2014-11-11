@@ -1,0 +1,1 @@
+g++ Fastjet/Test.o  -L/Users/lb8075/madanalysis5/tools/SampleAnalyzer/Lib -lfastjet_for_ma5 -lcommons_for_ma5 -L/Users/lb8075/SecondRoot/root/lib -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -lpthread -Wl,-rpath,/Users/lb8075/SecondRoot/root/lib -stdlib=libc++ -lm -ldl -lEG -o ../Bin/TestFastjet

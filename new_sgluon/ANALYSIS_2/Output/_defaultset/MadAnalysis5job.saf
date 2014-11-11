@@ -1,0 +1,28 @@
+<SAFheader>
+</SAFheader>
+
+<SampleGlobalInfo>
+# xsection     xsection_error nevents        sum_weight+    sum_weight-    
+2.398865e-05   0.000000e+00   10000          1.000000e+04   0.000000e+00   
+</SampleGlobalInfo>
+
+<FileInfo>
+"/Users/lb8075/MG5_aMC_v2_1_2/sgluon_new/Events/run_03/tag_1_pythia_events.hep.gz" # file 1 / 1
+</FileInfo>
+
+<SampleDetailedInfo>
+# xsection     xsection_error nevents        sum_weight+    sum_weight-    
+2.398865e-05   0.000000e+00   10000          1.000000e+04   0.000000e+00    # file 1 / 1
+</SampleDetailedInfo>
+
+<Selection>
+<InitialCounter>
+"Initial number of events"      #
+0               0               # nentries
+0.000000e+00    0.000000e+00    # sum of weights
+0.000000e+00    0.000000e+00    # sum of weights^2
+</InitialCounter>
+
+</Selection>
+<SAFfooter>
+</SAFfooter>

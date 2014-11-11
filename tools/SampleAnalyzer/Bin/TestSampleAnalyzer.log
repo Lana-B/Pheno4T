@@ -1,0 +1,24 @@
+BEGIN-SAMPLEANALYZER-TEST
+
+    * SampleAnalyzer for MadAnalysis 5 - Welcome.
+List of available analyzers:
+------------------------------------------
+------------------------------------------
+
+List of available readers:
+------------------------------------------
+------------------------------------------
+
+List of available writers:
+------------------------------------------
+------------------------------------------
+
+List of available JetClusterer:
+------------------------------------------
+------------------------------------------
+
+List of available DetectorSimList:
+------------------------------------------
+------------------------------------------
+
+END-SAMPLEANALYZER-TEST

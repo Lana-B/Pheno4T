@@ -1,0 +1,54 @@
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C ConstituentSubtractor
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C EnergyCorrelator
+g++ -O3 -Wall -g -I/Users/lb8075/madanalysis5/tools/fastjet/include   -c -o EnergyCorrelator.o EnergyCorrelator.cc
+g++ -O3 -Wall -g -I/Users/lb8075/madanalysis5/tools/fastjet/include   -c -o ConstituentSubtractor.o ConstituentSubtractor.cc
+ar cru libEnergyCorrelator.a EnergyCorrelator.o
+ranlib libEnergyCorrelator.a
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C GenericSubtractor
+g++ -O3 -Wall -g -I/Users/lb8075/madanalysis5/tools/fastjet/include   -c -o GenericSubtractor.o GenericSubtractor.cc
+ar cru libConstituentSubtractor.a ConstituentSubtractor.o
+ranlib libConstituentSubtractor.a
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C JetCleanser
+g++ -O3 -Wall -g -I/Users/lb8075/madanalysis5/tools/fastjet/include   -c -o JetCleanser.o JetCleanser.cc
+In file included from JetCleanser.cc:26:
+./JetCleanser.hh:106:23: warning: in-class initializer for static data member of type 'const double' is a GNU extension [-Wgnu-static-float-init]
+  static const double jc_zero = 1.0e-6;
+                      ^         ~~~~~~
+ar cru libGenericSubtractor.a GenericSubtractor.o
+ranlib libGenericSubtractor.a
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C JetFFMoments
+g++ -O3 -Wall -g -I/Users/lb8075/madanalysis5/tools/fastjet/include   -c -o JetFFMoments.o JetFFMoments.cc
+1 warning generated.
+ar cru libJetCleanser.a JetCleanser.o
+ranlib libJetCleanser.a
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C JetsWithoutJets
+g++ -O3 -Wall -g -I/Users/lb8075/madanalysis5/tools/fastjet/include   -c -o JetsWithoutJets.o JetsWithoutJets.cc
+ar cru libJetFFMoments.a JetFFMoments.o
+ranlib libJetFFMoments.a
+g++ -O3 -Wall -g -I/Users/lb8075/madanalysis5/tools/fastjet/include   -c -o EventStorage.o EventStorage.cc
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C Nsubjettiness
+g++ -O3 -Wall -Woverloaded-virtual -g -I/Users/lb8075/madanalysis5/tools/fastjet/include   -c -o Nsubjettiness.o Nsubjettiness.cc
+ar cru libJetsWithoutJets.a JetsWithoutJets.o EventStorage.o
+ranlib libJetsWithoutJets.a
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C ScJet
+g++ -O3 -Wall -g -I/Users/lb8075/madanalysis5/tools/fastjet/include   -c -o ScJet.o ScJet.cc
+In file included from Nsubjettiness.cc:26:
+./NjettinessPlugin.hh:180:38: warning: unused variable 'it' [-Wunused-variable]
+      std::list<int>::const_iterator it = indices.begin();
+                                     ^
+1 warning generated.
+ar cru libNsubjettiness.a Nsubjettiness.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib: file: libNsubjettiness.a(Nsubjettiness.o) has no symbols
+ranlib libNsubjettiness.a
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib: file: libNsubjettiness.a(Nsubjettiness.o) has no symbols
+warning: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib: warning for library: libNsubjettiness.a the table of contents is empty (no object file members in the library define global symbols)
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C SubjetCounting
+g++ -O3 -Wall -g -I/Users/lb8075/madanalysis5/tools/fastjet/include   -c -o SubjetCounting.o SubjetCounting.cc
+ar cru libScJet.a ScJet.o
+ranlib libScJet.a
+/Applications/Xcode.app/Contents/Developer/usr/bin/make FJCONTRIB_SUBMAKE=1 -C VariableR
+g++ -O3 -Wall -Woverloaded-virtual -g -I/Users/lb8075/madanalysis5/tools/fastjet/include   -c -o VariableRPlugin.o VariableRPlugin.cc
+ar cru libSubjetCounting.a SubjetCounting.o
+ranlib libSubjetCounting.a
+ar cru libVariableR.a VariableRPlugin.o
+ranlib libVariableR.a

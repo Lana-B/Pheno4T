@@ -1,0 +1,18 @@
+Configuring fjcontrib version 1.012
+
+Enabled contribs: 
+        ConstituentSubtractor v1.0.0           
+        EnergyCorrelator     v1.0.1           
+        GenericSubtractor    v1.2.0           
+        JetCleanser          v1.0.0           
+        JetFFMoments         v1.0.0           
+        JetsWithoutJets      v1.0.0           
+        Nsubjettiness        v1.0.3           
+        ScJet                v1.1.0           
+        SubjetCounting       v1.0.1           
+        VariableR            v1.1.1           
+
+Installation prefix: /Users/lb8075/madanalysis5/tools/fastjet
+--------------------------------------------------
+Now run 'make', optionally 'make check', and 'make install'
+

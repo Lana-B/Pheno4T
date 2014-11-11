@@ -1,0 +1,7 @@
+set main.currentdir = /Users/lb8075/madanalysis5
+set main.fastsim.package = fastjet
+set main.fastsim.algorithm = antikt
+set main.fastsim.ptmin = 5
+set main.fastsim.radius = 0.5
+set main.outputfile = sgluon600_8TeV.lhe
+import /Users/lb8075/MG5_aMC_v2_1_2/my_sgluon_400/Events/run_03_600/tag_1_pythia_events.hep.gz

@@ -1,0 +1,2 @@
+g++ -Wall -O3 -fPIC -I/Users/lb8075/madanalysis5/tools/ -I./ -pthread -stdlib=libc++ -m64 -I/Users/lb8075/SecondRoot/root/include -DROOT_USE -o Main/main.o -c Main/main.cpp
+g++ -Wall -O3 -fPIC -I/Users/lb8075/madanalysis5/tools/ -I./ -pthread -stdlib=libc++ -m64 -I/Users/lb8075/SecondRoot/root/include -DROOT_USE -o SampleAnalyzer/User/Analyzer/user.o -c SampleAnalyzer/User/Analyzer/user.cpp

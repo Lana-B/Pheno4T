@@ -39,21 +39,14 @@ namespace MA5
         std::vector<double> vecMuon;
         std::vector<double> vecMuonEff;
 
-        std::vector<const MCParticleFormat*> electrons, muons, positrons, antimuons, jets, btags, MCMET;
-        std::vector<const MCParticleFormat*> leptons; //electrons and muons of either charge
-        std::vector<const MCParticleFormat*> posileptons; //positrons and antimuons
-        std::vector<const MCParticleFormat*> negaleptons; //electrons and muons
-        
         double dSelectionEff;
         double dLeptonEff;
         double dHTEff;
         double dMETEff;
         double dBTagEff;
         
-        double dCounterPassedEvents;
+        int dCounterPassedEvents;
         double dCounterSelectionEff;
-        double dHTcount;
-        int Wcount;
         
         bool VETObool;
         

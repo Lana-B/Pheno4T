@@ -29,15 +29,12 @@ bool CMS_SUS_13_013::Initialize(const MA5::Configuration& cfg, const std::map<st
     Manager()->AddCut("2 leptons");
     Manager()->AddCut("same sign leptons");
     Manager()->AddCut("Njets>=4", "SR28");
-    Manager()->AddCut("NBjets>=2", "SR28");
     Manager()->AddCut("3rd lepton veto");
     
     dCounterSelectionEff = 0;
     dCounterPassedEvents = 0;
-    dHTcount = 0.;
-    Wcount = 0;
     
-    cout << "END   Initialization" << endl;
+    cout << "END Initialization" << endl;
     cout<<""<<endl;
 
     return true;
@@ -63,36 +60,37 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
     
     //////// Plotting efficiency curves /////////
     
-    for (int i=0; i<=800; i+=20){
+    for (int i=0; i<=800; i+=20){   //Filling HT curve vector
         vecHT.push_back((double)i);
         vecHTEff.push_back(dFunctionHT((double)i, "SR28"));
     }
     
-    for (int i=0; i<=200; i+=5){
+    for (int i=0; i<=200; i+=5){   //Filling MET curve vector
         vecMET.push_back((double)i);
         vecMETEff.push_back(dFunctionMET((double)i, "SR28"));
     }
     
-    for (int i=0; i<=100; i+=2){
+    for (int i=0; i<=100; i+=2){   //filling Jet Reco efficiency curve vector
         vecJetReco.push_back((double)i);
         vecJetRecoEff.push_back(dFunctionJetReco((double)i, "SR28"));
     }
     
-    for (int i=0; i<601; i+=2){
+    for (int i=0; i<601; i+=2){   //Filling bTag efficiency curve vector
         vecBTag.push_back((double)i);
         vecBTagEff.push_back(dFunctionBTag((double)i, "SR28"));
     }
     
-    for (int i=10; i<120; i+=5){
+    for (int i=10; i<120; i+=5){    //Filling muon efficiency curve vector (pdgid = 13)
         vecMuon.push_back((double)i);
         vecMuonEff.push_back(dFunctionLepton((double)i, 13, "SR28"));
     }
 
-    for (int i=10; i<120; i+=5){
+    for (int i=10; i<120; i+=5){    //Filling electron efficiency curve vector (pdgid = 11)
         vecElectron.push_back((double)i);
         vecElectronEff.push_back(dFunctionLepton((double)i, 11, "SR28"));
     }
 
+    //Graph for the efficiency of tagging a b jet as a b
     TCanvas *c1 = new TCanvas();
     c1->cd();
     EffBTag = new TGraph(vecBTag.size(), &(vecBTag[0]), &(vecBTagEff[0]));
@@ -107,6 +105,7 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
     EffBTag->Draw("APL");
     c1->SaveAs("BTagEff.png");
     
+    //Graph for HT efficiency
     TCanvas *c2 = new TCanvas();
     c2->cd();
     EffHT = new TGraph(vecHT.size(), &(vecHT[0]), &(vecHTEff[0]));
@@ -119,6 +118,7 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
     EffHT->Draw("APL");
     c2->SaveAs("HTEff.png");
     
+    //Graph for MET efficiency
     TCanvas *c3 = new TCanvas();
     c3->cd();
     EffMET = new TGraph(vecMET.size(), &(vecMET[0]), &(vecMETEff[0]));
@@ -129,25 +129,22 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
     EffMET->GetXaxis()->SetTitle("gen ETmiss");
     EffMET->GetYaxis()->SetTitle("Efficiency");
     EffMET->Draw("APL");
-    
     c3->SaveAs("METEff.png");
     
+    //Graph for the efficiency of reconstructing a jet
     TCanvas *c4 = new TCanvas();
     c4->cd();
     EffJetReco = new TGraph(vecJetReco.size(), &(vecJetReco[0]), &(vecJetRecoEff[0]));
-    
     EffJetReco->SetLineColor(kBlue);
     EffJetReco->SetLineWidth(2);
     EffJetReco->SetTitle("Jet reconstruction");
     EffJetReco->Draw("APL");
-    
     EffJetReco->GetXaxis()->SetTitle("gen Jet PT");
     EffJetReco->GetYaxis()->SetTitle("Efficiency");
     EffJetReco->Draw("APL");
-    
     c4->SaveAs("JetRecoEff.png");
     
-    
+    //Graph for the efficiency of reconstructing leptons - muons and electrons
     TCanvas *c5 = new TCanvas();
     c5->cd();
     EffMuon = new TGraph(vecMuon.size(), &(vecMuon[0]), &(vecMuonEff[0]));
@@ -155,7 +152,6 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
     EffElectron->SetLineColor(kBlue);
     EffElectron->SetLineWidth(2);
     EffMuon->GetYaxis()->SetRangeUser(0, 0.7);
-    
     EffMuon->SetLineColor(kRed);
     EffMuon->SetLineWidth(2);
     EffMuon->SetTitle("Jet reconstruction");
@@ -164,7 +160,6 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
     EffMuon->GetYaxis()->SetTitle("Efficiency");
     EffMuon->Draw("APL");
     EffElectron->Draw("same");
-     
     c5->SaveAs("LeptonEff.png");
     
     
@@ -193,8 +188,6 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
 {
     if (event.mc() !=0)
      {
-         dHTcount = 0;
-         Wcount = 0;
          double myEventWeight;
          if(Configuration().IsNoEventWeight()) myEventWeight=1.;
          else if(event.mc()->weight()!=0.) myEventWeight = event.mc()->weight();
@@ -208,10 +201,10 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          
          //cout << "---------------NEW EVENT-------------------" << endl;
 
-         std::vector<const MCParticleFormat*> electrons, muons, positrons, antimuons, jets, btags, MCMET;
+         std::vector<const MCParticleFormat*> electrons, muons, positrons, antimuons, jets, bjets, MCMET;
          std::vector<const MCParticleFormat*> leptons; //electrons and muons of either charge
-         std::vector<const MCParticleFormat*> posileptons; //positrons and antimuons
-         std::vector<const MCParticleFormat*> negaleptons; //electrons and muons
+         std::vector<const MCParticleFormat*> posleptons; //positrons and antimuons
+         std::vector<const MCParticleFormat*> negleptons; //electrons and muons
          std::vector<const MCParticleFormat*> lightsnbs; //lights and bs
          
          PHYSICS->mcConfig().AddHadronicId(5);   //identifying bjets as hadronic
@@ -223,15 +216,6 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          for (unsigned int i=0;i<event.mc()->particles().size();i++)
          {
              const MCParticleFormat* part = &event.mc()->particles()[i];
-
-             if(part->statuscode() == 3 && std::abs(part->pdgid())==24){
-                std::vector<MCParticleFormat*> Wdaughters = part->daughters();
-                Wcount+=1;
-                for(int kk=0; kk<Wdaughters.size(); kk++){
-                   // cout<<"daughter of W flavour "<<Wdaughters[kk]->pdgid()<<endl;
-                }
-             }
-
              
              //---------------------------------------------------------------------------------------------//
              //-------------------------------Add particles to vector collections---------------------------//
@@ -252,7 +236,7 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
                 if(std::abs(part->momentum().Eta())<2.5) antimuons.push_back(part);
              }
              else if(std::abs(part->pdgid()) == 5) {
-                if(std::abs(part->momentum().Eta())<2.5) btags.push_back(part);
+                if(std::abs(part->momentum().Eta())<2.5) bjets.push_back(part);
              }
              else if(std::abs(part->pdgid()) == 12) {
                 MCMET.push_back(part);
@@ -262,44 +246,29 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
                  if(std::abs(part->momentum().Eta())<2.5) leptons.push_back(part);
              }
              if(part->pdgid() == 11 || part->pdgid() == 13) {
-                 if(std::abs(part->momentum().Eta())<2.5) negaleptons.push_back(part); //Negative leptons
+                 if(std::abs(part->momentum().Eta())<2.5) negleptons.push_back(part); //Negative leptons
              }
              if(part->pdgid() == -11 || part->pdgid() == -13) {
-                 if(std::abs(part->momentum().Eta())<2.5) posileptons.push_back(part); //Positive leptons
+                 if(std::abs(part->momentum().Eta())<2.5) posleptons.push_back(part); //Positive leptons
              }
-             if(part->pdgid() == 5 || part->pdgid() == 21 || part->pdgid() == 15 ||part->pdgid() == -15){
-                dHTcount += part->momentum().Pt();
-             }
-             if(std::abs(part->pdgid()) == 21 || std::abs(part->pdgid()) == 5) {
+             if(std::abs(part->pdgid()) == 21 || std::abs(part->pdgid()) == 5) { //light quarks and b quarks
                  if(std::abs(part->momentum().Eta())<2.5) lightsnbs.push_back(part);
              }
-             if(std::abs(part->pdgid()) == 21 || std::abs(part->pdgid()) == 5 || std::abs(part->pdgid()) == 15) {
+             if(std::abs(part->pdgid()) == 21 || std::abs(part->pdgid()) == 5 || std::abs(part->pdgid()) == 15) { 
+                //lights, bs, taus...ie. all jets
                 if(std::abs(part->momentum().Eta())<2.5) jets.push_back(part);
              }
 
          }
 
-
-         if(Wcount != 4){
-            cout<<"TOO MANY........W count = "<<Wcount<<endl;
-
-         }
          //---------------------------------------------------------------------------------------------//
          //-----------------------Apply baseline cuts 2 same sign leptons-------------------------------//
          //---------------------------------------------------------------------------------------------//
-/*
-         if(jets.size()<1){
-            cout<<"NO JETS !!!!!!!!!"<<endl;
-         }
 
-         else{
-            std::vector<const MCParticleFormat*> mothers = jets[0]->mothers();
-         }
-*/
          if ( !Manager()->ApplyCut( (leptons.size() > 1),"2 leptons")) return true; //there are at least 2 leptons with pt>20 |eta|>2.5       
 
          bool SSlep = false;
-         if(posileptons.size() > 1 || negaleptons.size() > 1){
+         if(posleptons.size() > 1 || negleptons.size() > 1){
              SSlep = true;
          }
          if ( !Manager()->ApplyCut( SSlep,"same sign leptons")) return true;
@@ -308,7 +277,6 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          //---------------------------------Making selection region cuts--------------------------------//
          //---------------------------------------------------------------------------------------------//
          if( !Manager()->ApplyCut((jets.size() > 3), "Njets>=4"))  return true;
-         //if( !Manager()->ApplyCut((btags.size() > 1), "NBjets>=2"))  return true;
 
 
          //---------------------------------------------------------------------------------------------//
@@ -319,37 +287,26 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
  
          VETObool=true;
 
-         bool negabool = dFunctionVETO(negaleptons, posileptons); //two SS negative leptons with pT>20, check positive leptons with no pT cut
-         bool posibool = dFunctionVETO(posileptons, negaleptons); //two SS positive leptons with pT>20, check negative leptons with no pT cut
+         bool negbool = dFunctionVETO(negleptons, posleptons); //if two SS negative leptons with pT>20, check positive leptons with no pT cut
+         bool posbool = dFunctionVETO(posleptons, negleptons); //if two SS positive leptons with pT>20, check negative leptons with no pT cut
 
-         if( negabool == true || posibool == true){
+         if( negbool == true || posbool == true){
              VETObool = false; //if the veto criteria are satisified the event does not pass the selection
          }
 
          if ( !Manager()->ApplyCut( VETObool,"3rd lepton veto")) return true;
-
          //---------------------------------------------------------------------------------------------//
          //------------------------------Calculate and combine efficiences------------------------------//
          //---------------------------------------------------------------------------------------------//
          
          dMETEff = dFunctionMET(event.mc()->MET().pt(), "SR28");
          dHTEff = dFunctionHT(event.mc()->THT(), "SR28");
-         //cout<<" total HT = "<<dHTcount<<endl;
-
-         //cout<<"HT: "<<event.mc()->THT()<<endl;
-
-         dLeptonEff = dFunctionTotalLepton(posileptons, negaleptons);
-
+         dLeptonEff = dFunctionTotalLepton(posleptons, negleptons);
          dBTagEff = dFunctionTotalBTag(lightsnbs);
-         //cout<<"    lightsnbs:  "<<dBTagEff<<endl;
-         //cout<<""<<endl;
-         //dBTagEff = dFunctionTotalBTag(btags);
-         //cout<<"bs only: "<<dbsonly<<endl;
-
          dSelectionEff = dHTEff * dMETEff * dBTagEff * dLeptonEff;
 
          dCounterSelectionEff += dSelectionEff;
-         dCounterPassedEvents +=1.;
+         dCounterPassedEvents += 1;
 
          return true;
      }//end of event.mc()
@@ -372,7 +329,6 @@ double CMS_SUS_13_013::dFunctionMET(double dGenMET, std::string SearchReg){
         sigma = 36.90;      // +\-0.14
     }
     double efficiency  = 0.5 * E_inf * (erf((dGenMET - numxhalf)/sigma) + 1.);
-
 
     return efficiency;
 }
@@ -422,7 +378,7 @@ double CMS_SUS_13_013::dFunctionBTag(double dGenJetPt, std::string SearchReg){
     double dE = -3.26e-04;  // +/- 0.01e-04
     double dF = 0.7681;     // +/- 0.0016
     double effbTagged = 0;
-    
+
     if (dGenJetPt > 120){
         effbTagged = (dE*dGenJetPt) + dF;
     }
@@ -480,21 +436,20 @@ bool CMS_SUS_13_013::dFunctionVETO(std::vector<const MCParticleFormat*> leptons1
     return bResult;
 }
 
-
-double CMS_SUS_13_013::dFunctionTotalLepton(std::vector<const MCParticleFormat*> posileptons, std::vector<const MCParticleFormat*> negaleptons){
+double CMS_SUS_13_013::dFunctionTotalLepton(std::vector<const MCParticleFormat*> posleptons, std::vector<const MCParticleFormat*> negleptons){
 
     double w_0pairs;
     double w_GE1pair; //efficiency for >= one pair
     
-    if ( posileptons.size() > 1 && negaleptons.size() > 1){
-        w_0pairs = (1 - dFunctionGE2("lepton", posileptons)) * (1 - dFunctionGE2("lepton", negaleptons));
+    if ( posleptons.size() > 1 && negleptons.size() > 1){
+        w_0pairs = (1 - dFunctionGE2("lepton", posleptons)) * (1 - dFunctionGE2("lepton", negleptons));
         w_GE1pair = 1 -  w_0pairs;
     }
-    else if ( posileptons.size() > 1 && negaleptons.size() <2){
-        w_GE1pair = dFunctionGE2("lepton", posileptons);
+    else if ( posleptons.size() > 1 && negleptons.size() <2){
+        w_GE1pair = dFunctionGE2("lepton", posleptons);
     }
-    else if ( negaleptons.size() > 1 && posileptons.size() <2){
-        w_GE1pair = dFunctionGE2("lepton", negaleptons);
+    else if ( negleptons.size() > 1 && posleptons.size() <2){
+        w_GE1pair = dFunctionGE2("lepton", negleptons);
     }
     else{
         throw std::invalid_argument("there do not seem to be 2 same sign leptons");

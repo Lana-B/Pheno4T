@@ -49,6 +49,13 @@ namespace MA5
         double dCounterSelectionEff;
         
         bool VETObool;
+        bool SSlep;
+
+
+        double METcounter;
+        double HTcounter;
+        double leptoncounter;
+        double btagcounter;
         
      private:
         

@@ -389,7 +389,7 @@ double CMS_SUS_13_013::dFunctionLepton(double dGenLepPt, int leptFlav, std::stri
             sigma = 29.949;     // +\-0.377
         }
     }
-    double partofeff = (dGenLepPt - 10)/sigma ;
+    double partofeff = (dGenLepPt - 20)/sigma ;
     double efficiency  = ( E_inf * ( erf(partofeff) ) ) + (E_10*(1 - erf(partofeff)));
 
     return efficiency;

@@ -23,7 +23,7 @@ namespace MA5
         double dFunctionTotalBTag(std::vector<const MCParticleFormat*> btagsvec);
         double dFunctionGE2(std::string particleType, std::vector<const MCParticleFormat*> vec_particles);
         double dFunctionBTagCombined(double dGenJetPt, std::string SearchReg);
-        double dFunctionTotalLepton(std::vector<const MCParticleFormat*> posileptons, std::vector<const MCParticleFormat*> negaleptons);
+        double dFunctionTotalLepton(std::vector<const MCParticleFormat*> posleptons, std::vector<const MCParticleFormat*> negleptons);
         bool dFunctionVETO(std::vector<const MCParticleFormat*> leptons1, std::vector<const MCParticleFormat*> leptons2);
 
         std::vector<double> vecMET;

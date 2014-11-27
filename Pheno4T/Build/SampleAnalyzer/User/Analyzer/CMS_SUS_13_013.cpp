@@ -42,6 +42,7 @@ bool CMS_SUS_13_013::Initialize(const MA5::Configuration& cfg, const std::map<st
     cout << "END Initialization" << endl;
     cout<<""<<endl;
 
+    cout<<"git branch simple"<<endl;
     return true;
 }
 

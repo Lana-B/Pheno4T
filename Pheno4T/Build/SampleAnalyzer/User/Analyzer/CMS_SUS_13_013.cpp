@@ -234,29 +234,30 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
 
              if(part->statuscode() != 1) continue; //ie. skip if not a final state particle
              //if(part->pdgid() == 15 || part->pdgid() == -15 ){ /*cout<<"!!!!!!!!  TAU !!!!!!!"<<endl;*/}
+
              if(part->pdgid() == 11) {
-                if(std::abs(part->momentum().Eta())<2.5 && !( 1.4442<std::abs(part->momentum().Eta()) && std::abs(part->momentum().Eta())< 1.566  )){
+                if(std::abs(part->momentum().Eta())<2.5 && !( 1.4442<std::abs(part->momentum().Eta()) && std::abs(part->momentum().Eta())< 1.566) && part->momentum().Pt()>20){
                     electrons.push_back(part);
                     leptons.push_back(part);
                     negleptons.push_back(part);
                 }
              }
              else if(part->pdgid() == 13) {
-                if(std::abs(part->momentum().Eta())<2.5){
+                if(std::abs(part->momentum().Eta())<2.5 && part->momentum().Pt()>20){
                     muons.push_back(part);
                     leptons.push_back(part);
                     negleptons.push_back(part);
                 }
              }
              else if(part->pdgid() == -11) {
-                if(std::abs(part->momentum().Eta())<2.5 && !( 1.4442<std::abs(part->momentum().Eta()) && std::abs(part->momentum().Eta())< 1.566  )){
+                if(std::abs(part->momentum().Eta())<2.5 && !( 1.4442<std::abs(part->momentum().Eta()) && std::abs(part->momentum().Eta())< 1.566) && part->momentum().Pt()>20){
                     positrons.push_back(part);
                     leptons.push_back(part);
                     posleptons.push_back(part);
                 }
              }
              else if(part->pdgid() == -13) {
-                if(std::abs(part->momentum().Eta())<2.5 ){
+                if(std::abs(part->momentum().Eta())<2.5 && part->momentum().Pt()>20){
                     antimuons.push_back(part);
                     leptons.push_back(part);
                     posleptons.push_back(part);
@@ -310,7 +311,7 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          bool posbool = dFunctionVETO(posleptons, negleptons); //if two SS positive leptons with pT>20, check negative leptons with no pT cut
 
          if( negbool == true || posbool == true){
-             VETObool = false; //if the veto criteria are satisified the event does not pass the selection
+             VETObool = false; //if the veto criteria are satisified for either a positive pair or a negative pair the event does not pass the selection
          }
 
          if ( !Manager()->ApplyCut( VETObool,"3rd lepton veto")) return true;
@@ -389,7 +390,7 @@ double CMS_SUS_13_013::dFunctionLepton(double dGenLepPt, int leptFlav, std::stri
             sigma = 29.949;     // +\-0.377
         }
     }
-    double partofeff = (dGenLepPt - 20)/sigma ;
+    double partofeff = (dGenLepPt - 10)/sigma ;
     double efficiency  = ( E_inf * ( erf(partofeff) ) ) + (E_10*(1 - erf(partofeff)));
 
     return efficiency;

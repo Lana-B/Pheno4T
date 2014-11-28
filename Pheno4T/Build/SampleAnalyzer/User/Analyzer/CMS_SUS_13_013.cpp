@@ -314,7 +314,6 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
              VETObool = false; //if the veto criteria are satisified for either a positive pair or a negative pair the event does not pass the selection
          }
 
-         if ( !Manager()->ApplyCut( VETObool,"3rd lepton veto")) return true;
          //---------------------------------------------------------------------------------------------//
          //------------------------------Calculate and combine efficiences------------------------------//
          //---------------------------------------------------------------------------------------------//
@@ -331,6 +330,10 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
 
 
          dSelectionEff = dHTEff * dMETEff * dBTagEff * dLeptonEff;
+         Manager()->SetCurrentEventWeight((float)dSelectionEff);
+
+         if ( !Manager()->ApplyCut( VETObool,"3rd lepton veto")) return true;
+
 
          dCounterPassedEvents += 1;             //counts number of Events
          dCounterSelectionEff += dSelectionEff; //counts weighted number of Events

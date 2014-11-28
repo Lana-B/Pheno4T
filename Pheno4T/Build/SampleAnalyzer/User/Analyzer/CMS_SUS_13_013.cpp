@@ -25,12 +25,21 @@ bool CMS_SUS_13_013::Initialize(const MA5::Configuration& cfg, const std::map<st
     cout << "BEGIN Initialization" << endl;
     
     Manager()->AddRegionSelection("SR28");
-    
+     Manager()->AddRegionSelection("SR24");
+
     Manager()->AddCut("2 leptons");
     Manager()->AddCut("same sign leptons");
-    Manager()->AddCut("Njets>=4", "SR28");
+    Manager()->AddCut("Njets>=4");
+    Manager()->AddCut("Nbjets>=2");
+    Manager()->AddCut("HT>400");
+
     Manager()->AddCut("3rd lepton veto");
-    
+
+
+    Manager()->AddCut("MET>120", "SR28");
+    Manager()->AddCut("50<MET<120", "SR24");
+
+
     dCounterSelectionEff = 0;
     dCounterPassedEvents = 0;
 
@@ -236,13 +245,13 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
              if(part->statuscode() != 1) continue; //ie. skip if not a final state particle
              //if(part->pdgid() == 15 || part->pdgid() == -15 ){ /*cout<<"!!!!!!!!  TAU !!!!!!!"<<endl;*/}
              if(part->pdgid() == 11) {
-                if(std::abs(part->momentum().Eta())<2.5 && !( 1.4442<std::abs(part->momentum().Eta()) && std::abs(part->momentum().Eta())< 1.566  )){
+                if(std::abs(part->momentum().Eta())<2.5 && !( 1.4442<std::abs(part->momentum().Eta()) && std::abs(part->momentum().Eta())< 1.566  ) && part->momentum().Pt()>20 ){
                     electrons.push_back(part);
                     leptons.push_back(part);
                     negleptons.push_back(part);
                 }
              }
-             else if(part->pdgid() == 13) {
+             else if(part->pdgid() == 13 && part->momentum().Pt()>20) {
                 if(std::abs(part->momentum().Eta())<2.5){
                     muons.push_back(part);
                     leptons.push_back(part);
@@ -250,32 +259,32 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
                 }
              }
              else if(part->pdgid() == -11) {
-                if(std::abs(part->momentum().Eta())<2.5 && !( 1.4442<std::abs(part->momentum().Eta()) && std::abs(part->momentum().Eta())< 1.566  )){
+                if(std::abs(part->momentum().Eta())<2.5 && !( 1.4442<std::abs(part->momentum().Eta()) && std::abs(part->momentum().Eta())< 1.566  ) && part->momentum().Pt()>20 ){
                     positrons.push_back(part);
                     leptons.push_back(part);
                     posleptons.push_back(part);
                 }
              }
              else if(part->pdgid() == -13) {
-                if(std::abs(part->momentum().Eta())<2.5 ){
+                if(std::abs(part->momentum().Eta())<2.5  && part->momentum().Pt()>20 ){
                     antimuons.push_back(part);
                     leptons.push_back(part);
                     posleptons.push_back(part);
                 }
              }
              else if(std::abs(part->pdgid()) == 5) {
-                if(std::abs(part->momentum().Eta())<2.5) bjets.push_back(part);
+                if(std::abs(part->momentum().Eta())<2.5 && part->momentum().Pt()>40 ) bjets.push_back(part);
              }
              else if(std::abs(part->pdgid()) == 12) {
                 MCMET.push_back(part);
              }
              
              if(std::abs(part->pdgid()) == 21 || std::abs(part->pdgid()) == 5) { //light quarks and b quarks for btagging weight
-                 if(std::abs(part->momentum().Eta())<2.5) lightsnbs.push_back(part);
+                 if(std::abs(part->momentum().Eta())<2.5 && part->momentum().Pt()>40 ) lightsnbs.push_back(part);
              }
              if(std::abs(part->pdgid()) == 21 || std::abs(part->pdgid()) == 5 || std::abs(part->pdgid()) == 15) { 
                 //lights, bs, taus...ie. all jets
-                if(std::abs(part->momentum().Eta())<2.5) jets.push_back(part);
+                if(std::abs(part->momentum().Eta())<2.5&& part->momentum().Pt()>40 ) jets.push_back(part);
              }
 
          }
@@ -298,6 +307,10 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          //---------------------------------------------------------------------------------------------//
 
          if( !Manager()->ApplyCut((jets.size() > 3), "Njets>=4"))  return true;
+         if( !Manager()->ApplyCut((bjets.size() > 1), "Nbjets>=2"))  return true;
+         if( !Manager()->ApplyCut((event.mc()->THT() > 400), "HT>400"))  return true;
+
+        
 
          //---------------------------------------------------------------------------------------------//
          //----------------------------------------------veto-------------------------------------------//
@@ -315,6 +328,9 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          }
 
          if ( !Manager()->ApplyCut( VETObool,"3rd lepton veto")) return true;
+
+
+
          //---------------------------------------------------------------------------------------------//
          //------------------------------Calculate and combine efficiences------------------------------//
          //---------------------------------------------------------------------------------------------//
@@ -331,7 +347,9 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
 
 
          dSelectionEff = dHTEff * dMETEff * dBTagEff * dLeptonEff;
-
+         Manager()->SetCurrentEventWeight((float)dSelectionEff);
+         if( !Manager()->ApplyCut((event.mc()->MET().pt()>120), "MET>120"))  return true;
+         if( !Manager()->ApplyCut((event.mc()->MET().pt()>50 && event.mc()->MET().pt()<120), "50<MET<120"))  return true;
          dCounterPassedEvents += 1;             //counts number of Events
          dCounterSelectionEff += dSelectionEff; //counts weighted number of Events
 

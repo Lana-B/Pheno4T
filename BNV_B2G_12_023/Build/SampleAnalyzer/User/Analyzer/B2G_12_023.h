@@ -31,15 +31,15 @@ namespace MA5
 			double dEpsilon_X_BNV;
 
 			double dEpsilon_X_chan;
-    		double dE_B_tt;
-    		double dE_T_tt;
-    		double dE_B_tW;
-    		double dE_T_tW; 
+			double dE_B_tt;
+			double dE_T_tt;
+			double dE_B_tW;
+			double dE_T_tW; 
 
-    		double dN_T_bck;
-    		double dN_B_bck;
-    		double dN_B_obs;
-	};
+			double dN_T_bck;
+			double dN_B_bck;
+			double dN_B_obs;
+			};
 }
 
 #endif

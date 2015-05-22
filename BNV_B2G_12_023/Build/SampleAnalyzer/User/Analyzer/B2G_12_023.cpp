@@ -25,11 +25,14 @@ bool B2G_12_023::Initialize(const MA5::Configuration& cfg, const std::map<std::s
     cout << "BEGIN Initialization" << endl;
     // initialize variables, histos
     cout << "END   Initialization" << endl;
-    Manager()->AddRegionSelection("BNVdecays");
+    Manager()->AddRegionSelection("Basic");
+    Manager()->AddRegionSelection("Tight");
 
     Manager()->AddCut("exactly 1 lepton");
     Manager()->AddCut("Njets>=5");
     Manager()->AddCut("bjets>=1");
+    //Manager()->AddCut("MET<20","Tight");
+    //Manager()->AddCut("X^2<20","Tight");    
 
     dCounterPassedEvents = 0;
 
@@ -50,7 +53,8 @@ void B2G_12_023::Finalize(const SampleFormat& summary, const std::vector<SampleF
         //cout<<"        <> Weighted events = "<<dCounterSelectionEff<<"                  <>"<<endl;
     //cout<<"        <> Selection efficiency for SR28= "<<dCounterSelectionEff*100/10000<<"%  <>"<<endl;
     cout<<"        <><><><><><><><><><><><><><><><><><><><><><><><>"<<endl; 
-
+    //double output = dFunctionBeta(0, "Muon");
+    //cout<<output<<endl;
     cout << "END   Finalization" << endl;
 }
 
@@ -151,8 +155,8 @@ bool B2G_12_023::Execute(SampleFormat& sample, const EventFormat& event)
         //---------------------------------------------------------------------------------------------//
 
         if ( !Manager()->ApplyCut( (leptons.size() == 1), "exactly 1 lepton")) return true; //there are at least 2 leptons with |eta|>2.5       
-        if ( !Manager()->ApplyCut((jets.size() > 4), "Njets>=5"))  return true;
-        if ( !Manager()->ApplyCut((bjets.size() > 0), "bjets>=1"))  return true;
+        if ( !Manager()->ApplyCut( ( jets.size() > 4), "Njets>=5"))  return true;
+        if ( !Manager()->ApplyCut( (bjets.size() > 0), "bjets>=1"))  return true;
 
         //---------------------------------------------------------------------------------------------//
         //------------------------------Calculate and combine efficiences------------------------------//
@@ -180,230 +184,15 @@ bool B2G_12_023::Execute(SampleFormat& sample, const EventFormat& event)
         return true;
     }//end of event.mc()
      
-
-
-
-
-
-
-
-
-
-  // ***************************************************************************
-  // Example of analysis with generated particles
-  // Concerned samples : LHE/STDHEP/HEPMC
-  // ***************************************************************************
-  /*
-  if (event.mc()!=0)
-  {
-    cout << "---------------NEW EVENT-------------------" << endl;
-
-    // Initial state
-    for (unsigned int i=0;i<event.mc()->particles().size();i++)
-    {
-      const MCParticleFormat& part = event.mc()->particles()[i];
-
-      cout << "----------------------------------" << endl;
-      cout << "MC particle" << endl;
-      cout << "----------------------------------" << endl;
-
-      // display index particle
-      cout << "index=" << i+1;
-
-      // display the status code
-      cout << "Status Code=" << part.statuscode() << endl;
-      if (PHYSICS->IsInitialState(part)) cout << " (Initial state) ";
-      else if (PHYSICS->IsFinalState(part)) cout << " (Intermediate state) ";
-      else cout << " (Final state) ";
-      cout << endl;
-
-      // pdgid
-      cout << "pdg id=" << part.pdgid() << endl;
-      if (PHYSICS->IsInvisible(part)) cout << " (invisible particle) ";
-      else cout << " (visible particle) ";
-      cout << endl;
-
-      // display kinematics information
-      cout << "px=" << part.px()
-                << " py=" << part.py()
-                << " pz=" << part.pz()
-                << " e="  << part.e()
-                << " m="  << part.m() << endl;
-      cout << "pt=" << part.pt() 
-                << " eta=" << part.eta() 
-                << " phi=" << part.phi() << endl;
-
-      // display particle mother id
-      if (part.mother1()==0) 
-      {
-        cout << "particle with no mother." << endl;
-      }
-      else if (part.mother2()==0 || part.mother1()==part.mother2())
-      {
-        const MCParticleFormat* mother = part.mother1();
-        cout << "particle coming from the decay of " 
-             << mother->pdgid() << "." << endl;
-      }
-      else
-      {
-        const MCParticleFormat* mother1 = part.mother1();
-        const MCParticleFormat* mother2 = part.mother2();
-        cout << "particle coming from interaction between "
-             << mother1->pdgid() << " and " << mother2->pdgid()
-             << "." << endl;
-      }
-    }
-
-    // Transverse missing energy (MET)
-    cout << "MET pt=" << event.mc()->MET().pt()
-         << " phi=" << event.mc()->MET().phi() << endl;
-    cout << endl;
-
-    // Transverse missing hadronic energy (MHT)
-    cout << "MHT pt=" << event.mc()->MHT().pt()
-              << " phi=" << event.mc()->MHT().phi() << endl;
-    cout << endl;
-
-    // Total transverse energy (TET)
-    cout << "TET=" << event.mc()->TET() << endl;
-    cout << endl;
-
-    // Total transverse hadronic energy (THT)
-    cout << "THT=" << event.mc()->THT() << endl; 
-   cout << endl;
-
-  return true;
-  }
-  */
-
-
-  // ***************************************************************************
-  // Example of analysis with reconstructed objects
-  // Concerned samples : 
-  //   - LHCO samples
-  //   - LHE/STDHEP/HEPMC samples after applying jet-clustering algorithm
-  // ***************************************************************************
-  /*
-  if (event.rec()!=0)
-  {
-    cout << "---------------NEW EVENT-------------------" << endl;
-
-    // Looking through the reconstructed electron collection
-    for (unsigned int i=0;i<event.rec()->electrons().size();i++)
-    {
-      const RecLeptonFormat& elec = event.rec()->electrons()[i];
-      cout << "----------------------------------" << endl;
-      cout << "Electron" << endl;
-      cout << "----------------------------------" << endl;
-      cout << "index=" << i+1 
-                << " charge=" << elec.charge() << endl;
-      cout << "px=" << elec.px()
-                << " py=" << elec.py()
-                << " pz=" << elec.pz()
-                << " e="  << elec.e()
-                << " m="  << elec.m() << endl;
-      cout << "pt=" << elec.pt() 
-                << " eta=" << elec.eta() 
-                << " phi=" << elec.phi() << endl;
-      cout << "pointer address to the matching MC particle: " 
-                << elec.mc() << endl;
-      cout << endl;
-    }
-
-    // Looking through the reconstructed muon collection
-    for (unsigned int i=0;i<event.rec()->muons().size();i++)
-    {
-      const RecLeptonFormat& mu = event.rec()->muons()[i];
-      cout << "----------------------------------" << endl;
-      cout << "Muon" << endl;
-      cout << "----------------------------------" << endl;
-      cout << "index=" << i+1 
-                << " charge=" << mu.charge() << endl;
-      cout << "px=" << mu.px()
-                << " py=" << mu.py()
-                << " pz=" << mu.pz()
-                << " e="  << mu.e()
-                << " m="  << mu.m() << endl;
-      cout << "pt=" << mu.pt() 
-                << " eta=" << mu.eta() 
-                << " phi=" << mu.phi() << endl;
-      cout << "ET/PT isolation criterion =" << mu.ET_PT_isol() << endl;
-      cout << "pointer address to the matching MC particle: " 
-           << mu.mc() << endl;
-      cout << endl;
-    }
-
-    // Looking through the reconstructed hadronic tau collection
-    for (unsigned int i=0;i<event.rec()->taus().size();i++)
-    {
-      const RecTauFormat& tau = event.rec()->taus()[i];
-      cout << "----------------------------------" << endl;
-      cout << "Tau" << endl;
-      cout << "----------------------------------" << endl;
-      cout << "tau: index=" << i+1 
-                << " charge=" << tau.charge() << endl;
-      cout << "px=" << tau.px()
-                << " py=" << tau.py()
-                << " pz=" << tau.pz()
-                << " e="  << tau.e()
-                << " m="  << tau.m() << endl;
-      cout << "pt=" << tau.pt() 
-                << " eta=" << tau.eta() 
-                << " phi=" << tau.phi() << endl;
-      cout << "pointer address to the matching MC particle: " 
-           << tau.mc() << endl;
-      cout << endl;
-    }
-
-    // Looking through the reconstructed jet collection
-    for (unsigned int i=0;i<event.rec()->jets().size();i++)
-    {
-      const RecJetFormat& jet = event.rec()->jets()[i];
-      cout << "----------------------------------" << endl;
-      cout << "Jet" << endl;
-      cout << "----------------------------------" << endl;
-      cout << "jet: index=" << i+1 
-           << " charge=" << jet.charge() << endl;
-      cout << "px=" << jet.px()
-           << " py=" << jet.py()
-           << " pz=" << jet.pz()
-           << " e="  << jet.e()
-           << " m="  << jet.m() << endl;
-      cout << "pt=" << jet.pt() 
-           << " eta=" << jet.eta() 
-           << " phi=" << jet.phi() << endl;
-      cout << "b-tag=" << jet.btag()
-           << " true b-tag (before eventual efficiency)=" 
-           << jet.true_btag() << endl;
-      cout << "EE/HE=" << jet.EEoverHE()
-           << " ntracks=" << jet.ntracks() << endl;
-      cout << endl;
-    }
-
-    // Transverse missing energy (MET)
-    cout << "MET pt=" << event.rec()->MET().pt()
-         << " phi=" << event.rec()->MET().phi() << endl;
-    cout << endl;
-
-    // Transverse missing hadronic energy (MHT)
-    cout << "MHT pt=" << event.rec()->MHT().pt()
-              << " phi=" << event.rec()->MHT().phi() << endl;
-    cout << endl;
-
-    // Total transverse energy (TET)
-    cout << "TET=" << event.rec()->TET() << endl;
-    cout << endl;
-
-    // Total transverse hadronic energy (THT)
-    cout << "THT=" << event.rec()->THT() << endl;
-    cout << endl;
-  }
-  */
   return true;
 }
 
-void B2G_12_023::dFunctionBeta(double dBeta, string lepton){
+double B2G_12_023::dFunctionBeta(double dBeta, std::string lepton){
 
+    dE_B_tt = dFunctionEfficiencies(dBeta, lepton, "Basic", "tt");
+    dE_T_tt = dFunctionEfficiencies(dBeta, lepton, "Tight", "tt");
+    dE_B_tW = dFunctionEfficiencies(dBeta, lepton, "Basic", "tW");
+    dE_T_tW = dFunctionEfficiencies(dBeta, lepton, "Tight", "tW");
 
     double dFactorA = 1 + (( dSigma_tW * dE_B_tW )/( dSigma_tt * dE_B_tt ));
     double dFactorB = 1 + (( dSigma_tt * dE_B_tt )/( dSigma_tW * dE_B_tW ));
@@ -411,17 +200,57 @@ void B2G_12_023::dFunctionBeta(double dBeta, string lepton){
     double dFactor1 = ( 1/dFactorA )  *  ( dE_T_tt/dE_B_tt );
     double dFactor2 = ( 1/dFactorB )  *  ( dE_T_tW/dE_B_tW );
 
-    double dN_T_exp = (  ( dN_B_obs - dN_B_bck ) * (Factor1 + Factor2)  ) + dN_T_bck;
+    double dN_T_exp = (  ( dN_B_obs - dN_B_bck ) * (dFactor1 + dFactor2)  ) + dN_T_bck;
 
     return dN_T_exp;
 
 }
 
-void B2G_12_023::dFunctionEfficiencies(double dBeta, string lepton, string channel, string TorB){
+double B2G_12_023::dFunctionEfficiencies(double dBeta, std::string lepton, std::string TorB, std::string channel){
 
-    if(lepton=)
+    if(lepton=="Muon"){
+        if (TorB == "Basic"){
+            dEpsilon_X_SM_SM   = 8.1E-3;   // ±1.5E3
+            dEpsilon_X_BNV_SM  = 7.37E-02; // ±0.89E-2            
+            dEpsilon_X_BNV_BNV = 1E-02;    // ±0.16E-2
+            dEpsilon_X_SM      = 2.68E-03; // ±0.32E-3
+            dEpsilon_X_BNV     = 2.72E-02; // ±0.42E-2
+        }
+        else if (TorB == "Tight"){
+            dEpsilon_X_SM_SM   = 4.62E-04; // ±0.93E-2
+            dEpsilon_X_BNV_SM  = 1.86E-02; // ±0.32E-2           
+            dEpsilon_X_BNV_BNV = 1.74E-03; // ±0.32E-3
+            dEpsilon_X_SM      = 1.13E-04; // ±0.14E-4
+            dEpsilon_X_BNV     = 5.38E-03; // ± 0.84E-03    
+        }
+    }
 
+    else if(lepton=="Electron"){
+        if (TorB == "Basic"){
+            dEpsilon_X_SM_SM   = 8.0E-03;  // ±1.3E-03
+            dEpsilon_X_BNV_SM  = 7.33E-02; // ±0.88E-02 
+            dEpsilon_X_BNV_BNV = 1.55E-02; // ±0.25E-02   
+            dEpsilon_X_SM      = 2.64E-03; // ±0.31E-03
+            dEpsilon_X_BNV     = 2.80E-02; // ±0.42E-02           
+        }
+        else if (TorB == "Tight"){
+            dEpsilon_X_SM_SM   = 4.24E-04; // ±0.85E-04
+            dEpsilon_X_BNV_SM  = 1.62E-02; // ±0.27E-02           
+            dEpsilon_X_BNV_BNV = 2.64E-03; // ±0.55E-03
+            dEpsilon_X_SM      = 8.21E-05; // ±0.99E-05 
+            dEpsilon_X_BNV     = 5.84E-03; // ±0.82E-03            
+        }
+    }
+    else throw std::invalid_argument(" Wrong lepton name selected ");
 
+    if(channel == "tt"){
+        dEpsilon_X_chan = 2*dBeta*(1-dBeta)*dEpsilon_X_BNV_SM + pow((1-dBeta),2)*dEpsilon_X_SM_SM + pow(dBeta,2)*dEpsilon_X_BNV_BNV;
+    }
+    else if (channel == "tW"){
+        dEpsilon_X_chan = (1-dBeta)*dEpsilon_X_SM + dBeta*dEpsilon_X_BNV;
+    }
+    else throw std::invalid_argument("*** Wrong channel selected ***");
 
+    return dEpsilon_X_chan;
 }
 

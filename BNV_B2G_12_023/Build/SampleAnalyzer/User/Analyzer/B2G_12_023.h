@@ -15,14 +15,15 @@ namespace MA5
 			virtual bool Execute(SampleFormat& sample, const EventFormat& event);
 
 
-        double dFunctionBeta(double dBeta, string lepton); //function for calculating MET efficiency
-		double dFunctionEfficiencies(double dBeta, string lepton, string TorB, string channel)
+        double dFunctionBeta(double dBeta, std::string lepton); //function for calculating MET efficiency
+		double dFunctionEfficiencies(double dBeta, std::string lepton, std::string TorB, std::string channel);
         int dCounterPassedEvents;
         double dCounterSelectionEff;
+			static const double dSigma_tt = 22.2; // ±1.5pb
+			static const double dSigma_tW = 246; // ± 12pb
         
 		private:
-			double dSigma_tt = 22.2; // ±1.5pb
-			double dSigma_tW = 246; // ± 12pb
+
 
 			double dEpsilon_X_SM_SM;
 			double dEpsilon_X_BNV_SM;			
@@ -31,7 +32,14 @@ namespace MA5
 			double dEpsilon_X_BNV;
 
 			double dEpsilon_X_chan;
+    		double dE_B_tt;
+    		double dE_T_tt;
+    		double dE_B_tW;
+    		double dE_T_tW; 
 
+    		double dN_T_bck;
+    		double dN_B_bck;
+    		double dN_B_obs;
 	};
 }
 

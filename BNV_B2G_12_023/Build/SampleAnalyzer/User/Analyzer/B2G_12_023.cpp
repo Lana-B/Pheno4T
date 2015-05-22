@@ -189,6 +189,8 @@ bool B2G_12_023::Execute(SampleFormat& sample, const EventFormat& event)
 
 double B2G_12_023::dFunctionBeta(double dBeta, std::string lepton){
 
+    dSigma_tt = 22.2; // ±1.5pb
+    dSigma_tW = 246; // ± 12pb
     dE_B_tt = dFunctionEfficiencies(dBeta, lepton, "Basic", "tt");
     dE_T_tt = dFunctionEfficiencies(dBeta, lepton, "Tight", "tt");
     dE_B_tW = dFunctionEfficiencies(dBeta, lepton, "Basic", "tW");

@@ -21,8 +21,8 @@ namespace MA5
 	        double dCounterSelectionEff;
         
 		private:
-			static const double dSigma_tt = 22.2; // ±1.5pb
-			static const double dSigma_tW = 246; // ± 12pb
+			double dSigma_tt; 
+			double dSigma_tW; 
 
 			double dEpsilon_X_SM_SM;
 			double dEpsilon_X_BNV_SM;			

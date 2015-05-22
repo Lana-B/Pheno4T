@@ -1,0 +1,33 @@
+<SAFheader>
+</SAFheader>
+
+<InitialCounter>
+"Initial number of events"      #
+10000           0               # nentries
+1.000000e+04    0.000000e+00    # sum of weights
+1.000000e+04    0.000000e+00    # sum of weights^2
+</InitialCounter>
+
+<Counter>
+"exactly 1 lepton"              # 1st cut
+3998            0               # nentries
+3.998000e+03    0.000000e+00    # sum of weights
+3.998000e+03    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"Njets>=5"                      # 2st cut
+68              0               # nentries
+6.800000e+01    0.000000e+00    # sum of weights
+6.800000e+01    0.000000e+00    # sum of weights^2
+</Counter>
+
+<Counter>
+"bjets>=1"                      # 3st cut
+68              0               # nentries
+6.800000e+01    0.000000e+00    # sum of weights
+6.800000e+01    0.000000e+00    # sum of weights^2
+</Counter>
+
+<SAFfooter>
+</SAFfooter>

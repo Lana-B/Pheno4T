@@ -23,18 +23,19 @@ bool B2G_12_023::Initialize(const MA5::Configuration& cfg, const std::map<std::s
     cout<<""<<endl;
 
     cout << "BEGIN Initialization" << endl;
-    // initialize variables, histos
-    cout << "END   Initialization" << endl;
     Manager()->AddRegionSelection("Basic");
     Manager()->AddRegionSelection("Tight");
 
     Manager()->AddCut("exactly 1 lepton");
     Manager()->AddCut("Njets>=5");
     Manager()->AddCut("bjets>=1");
-    //Manager()->AddCut("MET<20","Tight");
-    //Manager()->AddCut("X^2<20","Tight");    
+    Manager()->AddCut("MET<20","Tight");
+    Manager()->AddCut("Chi^2<20","Tight");    
 
     dCounterPassedEvents = 0;
+
+    cout << "END   Initialization" << endl;
+
 
     return true;
 }
@@ -48,13 +49,12 @@ void B2G_12_023::Finalize(const SampleFormat& summary, const std::vector<SampleF
     cout << "BEGIN Finalization" << endl;
 
     cout<<""<<endl;
-    cout<<"        <><><><><><><><><><><><><><><><><><><><><><><><>"<<endl; 
-    cout<<"        <> Events passed = "<<dCounterPassedEvents<<"                        <>"<<endl;
-        //cout<<"        <> Weighted events = "<<dCounterSelectionEff<<"                  <>"<<endl;
-    //cout<<"        <> Selection efficiency for SR28= "<<dCounterSelectionEff*100/10000<<"%  <>"<<endl;
-    cout<<"        <><><><><><><><><><><><><><><><><><><><><><><><>"<<endl; 
+    cout<<"        <><><><><><><><><><><><><><><><><><><><><><><><><><><><><>"<<endl; 
+    cout<<"        <> Events passed in surviving selection region = "<<dCounterPassedEvents<<" <>"<<endl;
+    cout<<"        <><><><><><><><><><><><><><><><><><><><><><><><><><><><><>"<<endl; 
     double output = dFunctionBeta(0, "Muon");
     cout<<output<<endl;
+    cout<<""<<endl;
     cout << "END   Finalization" << endl;
 }
 
@@ -71,9 +71,10 @@ bool B2G_12_023::Execute(SampleFormat& sample, const EventFormat& event)
         else if(event.mc()->weight()!=0.) myEventWeight = event.mc()->weight();
         else
         {
-         WARNING << "Found one event with a zero weight. Skipping..." << endmsg;
-         return false;
+            WARNING << "Found one event with a zero weight. Skipping..." << endmsg;
+            return false;
         }
+
         Manager()->InitializeForNewEvent(myEventWeight);
         if (myEventWeight != 1)
         {
@@ -84,8 +85,6 @@ bool B2G_12_023::Execute(SampleFormat& sample, const EventFormat& event)
 
         std::vector<const MCParticleFormat*> electrons, muons, positrons, antimuons, jets, bjets, taus, MCMET;
         std::vector<const MCParticleFormat*> leptons; //electrons and muons of either charge
-        std::vector<const MCParticleFormat*> posleptons; //positrons and antimuons
-        std::vector<const MCParticleFormat*> negleptons; //electrons and muons
         std::vector<const MCParticleFormat*> lights_taus; //lights and bs
          
         PHYSICS->mcConfig().AddHadronicId(5);   //identifying bjets as hadronic
@@ -93,6 +92,10 @@ bool B2G_12_023::Execute(SampleFormat& sample, const EventFormat& event)
         PHYSICS->mcConfig().AddHadronicId(15);  //hadronically decaying taus
         PHYSICS->mcConfig().AddHadronicId(-15); //hadronically decaying anti-taus
         PHYSICS->mcConfig().AddInvisibleId(12); //identifying met as invisible
+
+        int jet_40_counter = 0;
+        int jet_55_counter = 0;
+        int jet_70_counter = 0;
 
         for (unsigned int i=0;i<event.mc()->particles().size();i++)
         {
@@ -103,61 +106,68 @@ bool B2G_12_023::Execute(SampleFormat& sample, const EventFormat& event)
             //---------------------------------------------------------------------------------------------//
 
             if(part->statuscode() != 1) continue; //ie. skip if not a final state particle
+
             if(part->pdgid() == 15 || part->pdgid() == -15 ){ 
                 if(std::abs(part->momentum().Eta())<2.4) taus.push_back(part);
             }
 
             if(part->pdgid() == 11) {
-                if(std::abs(part->momentum().Eta())<2.4 && !( 1.4442<std::abs(part->momentum().Eta()) && std::abs(part->momentum().Eta())< 1.566) && part->momentum().Pt()>20){
+                if(std::abs(part->momentum().Eta())<2.5 && !( 1.444 <std::abs(part->momentum().Eta()) && std::abs(part->momentum().Eta())< 1.566) && part->momentum().Pt()>30){
                     electrons.push_back(part);
                     leptons.push_back(part);
-                    negleptons.push_back(part);
                 }
             }
             else if(part->pdgid() == 13) {
-                if(std::abs(part->momentum().Eta())<2.4 && part->momentum().Pt()>20){
+                if(std::abs(part->momentum().Eta())<2.1 && part->momentum().Pt()>24){
                     muons.push_back(part);
                     leptons.push_back(part);
-                    negleptons.push_back(part);
                 }
              }
             else if(part->pdgid() == -11) {
-                if(std::abs(part->momentum().Eta())<2.4 && !( 1.4442<std::abs(part->momentum().Eta()) && std::abs(part->momentum().Eta())< 1.566) && part->momentum().Pt()>20){
+                if(std::abs(part->momentum().Eta())<2.5 && !( 1.444 <std::abs(part->momentum().Eta()) && std::abs(part->momentum().Eta())< 1.566) && part->momentum().Pt()>30){
                     positrons.push_back(part);
                     leptons.push_back(part);
-                    posleptons.push_back(part);
                 }
             }
             else if(part->pdgid() == -13) {
-                if(std::abs(part->momentum().Eta())<2.4 && part->momentum().Pt()>20){
+                if(std::abs(part->momentum().Eta())<2.1 && part->momentum().Pt()>24){
                     antimuons.push_back(part);
                     leptons.push_back(part);
-                    posleptons.push_back(part);
                 }
             }
             else if(std::abs(part->pdgid()) == 5) {
-                if(std::abs(part->momentum().Eta())<2.4) bjets.push_back(part);
+                if(std::abs(part->momentum().Eta())<2.4 && part->momentum().Pt()>30 ) bjets.push_back(part);
             }
             else if(std::abs(part->pdgid()) == 12) {
                 MCMET.push_back(part);
             }
          
-            if(std::abs(part->pdgid()) == 21 || std::abs(part->pdgid()) == 15) { //light quarks and b quarks for btagging weight
-                if(std::abs(part->momentum().Eta())<2.4) {
+            if(std::abs(part->pdgid()) == 21 || std::abs(part->pdgid()) == 15) { //light quarks and taus for W invariant mass
+                if(std::abs(part->momentum().Eta())<2.4 && part->momentum().Pt()>30 ) {
                     jets.push_back(part);
                     lights_taus.push_back(part);
                 }
             }
-
+            if(std::abs(part->pdgid()) == 21 || std::abs(part->pdgid()) == 15 || std::abs(part->pdgid()) == 5) { //light quarks, taus and b quarks jet momentum requirements
+                if(std::abs(part->momentum().Eta())<2.4 && part->momentum().Pt()>40) {
+                    jet_40_counter++;
+                    if(part->momentum().Pt()>55){
+                        jet_55_counter++;
+                        if( part->momentum().Pt()>70){
+                            jet_70_counter++;
+                        }
+                    }
+                }
+            }
         }
 
-        cout<<"pre jets.size()  "<<jets.size()<<endl;
-        jets.insert( jets.end(), bjets.begin(), bjets.end());
-        cout<<"post jets.size()  "<<jets.size()<<"  bjets.size: "<<bjets.size()<<"   taus.size(): "<<taus.size()<<"  lights_taus: "<<lights_taus.size()<<endl;;
+        if( jet_70_counter < 1 || jet_55_counter < 2 || jet_40_counter < 3) return true; 
+        //This ensures jets of momenta >70, >55, >40. The later cut of Njets>=5 with pt>30 takes care of the 4th and 5th jets momenta requirement.
 
+        jets.insert( jets.end(), bjets.begin(), bjets.end());
 
         //---------------------------------------------------------------------------------------------//
-        //-------------------------------- Apply baseline cuts ----------------------------------------//
+        //-------------------------------- Apply Basic Selection cuts ---------------------------------//
         //---------------------------------------------------------------------------------------------//
 
         if ( !Manager()->ApplyCut( (leptons.size() == 1), "exactly 1 lepton")) return true; //there are at least 2 leptons with |eta|>2.5       
@@ -165,32 +175,70 @@ bool B2G_12_023::Execute(SampleFormat& sample, const EventFormat& event)
         if ( !Manager()->ApplyCut( (bjets.size() > 0), "bjets>=1"))  return true;
 
         //---------------------------------------------------------------------------------------------//
-        //------------------------------Calculate and combine efficiences------------------------------//
+        //-------------------------------- Apply Tight Selection cuts ---------------------------------//
         //---------------------------------------------------------------------------------------------//
+        double dChi2 = dJetCombiner(jets, lights_taus, leptons);
 
-        // dMETEff = dFunctionMET(event.mc()->MET().pt(), "SR28");
-        // dHTEff = dFunctionHT(event.mc()->THT(), "SR28");
-        // dLeptonEff = dFunctionTotalLepton(posleptons, negleptons);
-        // dBTagEff = dFunctionTotalBTag(lightsnbs); //includes lights being mistagged as bs
-
-        // METcounter += dMETEff;
-        // HTcounter += dHTEff;
-        // leptoncounter += dLeptonEff;
-        // btagcounter += dBTagEff;
-
-
-        //dSelectionEff = dHTEff * dMETEff * dBTagEff * dLeptonEff;
-        //Manager()->SetCurrentEventWeight((float)dSelectionEff);
-
-
+        if ( !Manager()->ApplyCut( ( event.mc()->MET().pt() < 20 ), "MET<20"))  return true;
+        if ( !Manager()->ApplyCut( ( dChi2 < 20), "Chi^2<20"))  return true;
 
         dCounterPassedEvents += 1;             //counts number of Events
-        //dCounterSelectionEff += dSelectionEff; //counts weighted number of Events
 
         return true;
     }//end of event.mc()
      
   return true;
+}
+
+double B2G_12_023::dJetCombiner(std::vector<const MCParticleFormat*> jets, std::vector<const MCParticleFormat*> lights_taus, std::vector<const MCParticleFormat*> leptons){
+    double dMass_W = 80.385; //GeV
+    double dWidth_W = 2.085; //GeV
+    double dMass_Top = 173.34; //GeV
+    double dWidth_Top = 1.335; //GeV
+    double dChi2_Total_Smallest = 100; //Smallest chi^2 must be less than 20. This is a starting value for later logic.
+
+    if ( lights_taus.size() < 2 ) return dChi2_Total_Smallest;
+
+    //Loop for calculating invariant mass of W originating from hadronically decaying top. b-tagged jets not included.
+    for(int j1 = 0; j1<lights_taus.size()-1; j1++){
+        for(int j2 = j1+1; j2<lights_taus.size(); j2++){
+
+            TLorentzVector LVector_W;
+            LVector_W = lights_taus[j1]->momentum() + lights_taus[j2]->momentum();
+            double dInvMass_W = LVector_W.M();
+            double dChi2_W = pow((dInvMass_W - dMass_W),2) / pow(dWidth_W, 2);
+
+            // Loop for hadronic top
+            for(int j3 = 0; j3<jets.size(); j3++){
+                if (j3 == j2 || j3 == j1) continue;
+
+                TLorentzVector LVector_HadTop;
+                LVector_HadTop = jets[j1]->momentum() + jets[j2]->momentum() + jets[j3]->momentum();
+                double dInvMass_HadTop = LVector_HadTop.M();                
+                double dChi2_HadTop =  pow((dInvMass_HadTop - dMass_Top),2) / pow(dWidth_Top, 2);
+
+                // Loop for BNV decaying top
+                for(int j4=0; j4<jets.size()-1; j4++){
+                    if(j4 == j3 || j4 == j2 || j4 == j1) continue;
+
+                    for(int j5=j4+1; j5<jets.size(); j5++){
+                        if (j5 == j3 || j5 == j2 || j5 == j1) continue;
+
+                        TLorentzVector LVector_BNVTop;
+                        LVector_BNVTop = jets[j4]->momentum() + jets[j5]->momentum() + leptons[0]->momentum();
+                        double dInvMass_BNVTop = LVector_BNVTop.M();                
+                        double dChi2_BNVTop =  pow((dInvMass_BNVTop - dMass_Top),2) / pow(dWidth_Top, 2); 
+
+                        double dChi2_Total = dChi2_W + dChi2_HadTop + dChi2_BNVTop;
+                        if (dChi2_Total < dChi2_Total_Smallest){
+                            dChi2_Total_Smallest = dChi2_Total;
+                        }                       
+                    }
+                }
+            }
+        }
+    }
+    return dChi2_Total_Smallest;
 }
 
 double B2G_12_023::dFunctionBeta(double dBeta, std::string lepton){
@@ -263,9 +311,4 @@ double B2G_12_023::dFunctionEfficiencies(double dBeta, std::string lepton, std::
     else throw std::invalid_argument("*** Wrong channel selected ***");
 
     return dEpsilon_X_chan;
-}
-
-double B2G_12_023::dJetCombiner(){
-    return 0;
-
 }

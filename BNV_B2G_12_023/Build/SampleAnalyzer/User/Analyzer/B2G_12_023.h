@@ -17,6 +17,7 @@ namespace MA5
 
 	        double dFunctionBeta(double dBeta, std::string lepton); //function for calculating MET efficiency
 			double dFunctionEfficiencies(double dBeta, std::string lepton, std::string TorB, std::string channel);
+			double dJetCombiner();
 	        int dCounterPassedEvents;
 	        double dCounterSelectionEff;
         

@@ -53,8 +53,8 @@ void B2G_12_023::Finalize(const SampleFormat& summary, const std::vector<SampleF
         //cout<<"        <> Weighted events = "<<dCounterSelectionEff<<"                  <>"<<endl;
     //cout<<"        <> Selection efficiency for SR28= "<<dCounterSelectionEff*100/10000<<"%  <>"<<endl;
     cout<<"        <><><><><><><><><><><><><><><><><><><><><><><><>"<<endl; 
-    //double output = dFunctionBeta(0, "Muon");
-    //cout<<output<<endl;
+    double output = dFunctionBeta(0, "Muon");
+    cout<<output<<endl;
     cout << "END   Finalization" << endl;
 }
 
@@ -82,11 +82,11 @@ bool B2G_12_023::Execute(SampleFormat& sample, const EventFormat& event)
                  
         //cout << "---------------NEW EVENT-------------------" << endl;
 
-        std::vector<const MCParticleFormat*> electrons, muons, positrons, antimuons, jets, bjets, MCMET;
+        std::vector<const MCParticleFormat*> electrons, muons, positrons, antimuons, jets, bjets, taus, MCMET;
         std::vector<const MCParticleFormat*> leptons; //electrons and muons of either charge
         std::vector<const MCParticleFormat*> posleptons; //positrons and antimuons
         std::vector<const MCParticleFormat*> negleptons; //electrons and muons
-        std::vector<const MCParticleFormat*> lightsnbs; //lights and bs
+        std::vector<const MCParticleFormat*> lights_taus; //lights and bs
          
         PHYSICS->mcConfig().AddHadronicId(5);   //identifying bjets as hadronic
         PHYSICS->mcConfig().AddHadronicId(21);  //identifying jets as hadronic
@@ -103,7 +103,9 @@ bool B2G_12_023::Execute(SampleFormat& sample, const EventFormat& event)
             //---------------------------------------------------------------------------------------------//
 
             if(part->statuscode() != 1) continue; //ie. skip if not a final state particle
-            //if(part->pdgid() == 15 || part->pdgid() == -15 ){ /*cout<<"!!!!!!!!  TAU !!!!!!!"<<endl;*/}
+            if(part->pdgid() == 15 || part->pdgid() == -15 ){ 
+                if(std::abs(part->momentum().Eta())<2.4) taus.push_back(part);
+            }
 
             if(part->pdgid() == 11) {
                 if(std::abs(part->momentum().Eta())<2.4 && !( 1.4442<std::abs(part->momentum().Eta()) && std::abs(part->momentum().Eta())< 1.566) && part->momentum().Pt()>20){
@@ -140,14 +142,18 @@ bool B2G_12_023::Execute(SampleFormat& sample, const EventFormat& event)
                 MCMET.push_back(part);
             }
          
-            if(std::abs(part->pdgid()) == 21 || std::abs(part->pdgid()) == 5) { //light quarks and b quarks for btagging weight
-                if(std::abs(part->momentum().Eta())<2.4) lightsnbs.push_back(part);
+            if(std::abs(part->pdgid()) == 21 || std::abs(part->pdgid()) == 15) { //light quarks and b quarks for btagging weight
+                if(std::abs(part->momentum().Eta())<2.4) {
+                    jets.push_back(part);
+                    lights_taus.push_back(part);
+                }
             }
-            if(std::abs(part->pdgid()) == 21 || std::abs(part->pdgid()) == 5 || std::abs(part->pdgid()) == 15) { 
-                //lights, bs, taus...ie. all jets
-                if(std::abs(part->momentum().Eta())<2.4) jets.push_back(part);
-            }
+
         }
+
+        cout<<"pre jets.size()  "<<jets.size()<<endl;
+        jets.insert( jets.end(), bjets.begin(), bjets.end());
+        cout<<"post jets.size()  "<<jets.size()<<"  bjets.size: "<<bjets.size()<<"   taus.size(): "<<taus.size()<<"  lights_taus: "<<lights_taus.size()<<endl;;
 
 
         //---------------------------------------------------------------------------------------------//
@@ -191,6 +197,9 @@ double B2G_12_023::dFunctionBeta(double dBeta, std::string lepton){
 
     dSigma_tt = 22.2; // ±1.5pb
     dSigma_tW = 246; // ± 12pb
+    dN_T_bck =8100;
+    dN_B_bck = 290;
+    dN_B_obs = 47950;
     dE_B_tt = dFunctionEfficiencies(dBeta, lepton, "Basic", "tt");
     dE_T_tt = dFunctionEfficiencies(dBeta, lepton, "Tight", "tt");
     dE_B_tW = dFunctionEfficiencies(dBeta, lepton, "Basic", "tW");
@@ -256,3 +265,7 @@ double B2G_12_023::dFunctionEfficiencies(double dBeta, std::string lepton, std::
     return dEpsilon_X_chan;
 }
 
+double B2G_12_023::dJetCombiner(){
+    return 0;
+
+}

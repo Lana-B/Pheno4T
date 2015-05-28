@@ -30,7 +30,15 @@ bool B2G_12_023::Initialize(const MA5::Configuration& cfg, const std::map<std::s
     Manager()->AddCut("Njets>=5");
     Manager()->AddCut("bjets>=1");
     Manager()->AddCut("MET<20","Tight");
-    Manager()->AddCut("Chi^2<20","Tight");    
+    Manager()->AddCut("Chi^2<20","Tight"); 
+
+    Manager()->AddHisto("ET_miss", 40, 0, 200, "Basic");
+    Manager()->AddHisto("Chi2", 20, 0, 200, "Basic");
+    
+    c1 = new TCanvas();
+    c2 = new TCanvas();
+    hET_miss = new TH1D("ET_miss", "ET_miss", 40, 0, 200);
+    hChi2 = new TH1D("Chi2", "Chi2", 20, 0, 200);
 
     dCounterPassedEvents = 0;
 
@@ -54,6 +62,12 @@ void B2G_12_023::Finalize(const SampleFormat& summary, const std::vector<SampleF
     cout<<"        <><><><><><><><><><><><><><><><><><><><><><><><><><><><><>"<<endl; 
     double output = dFunctionBeta(0, "Muon");
     cout<<output<<endl;
+    c1->cd();
+    hET_miss->Draw();
+    c1->SaveAs("../Output/ET_miss.png");
+    c2->cd();
+    hChi2->Draw();
+    c2->SaveAs("../Output/Chi2.png");
     cout<<""<<endl;
     cout << "END   Finalization" << endl;
 }
@@ -174,10 +188,17 @@ bool B2G_12_023::Execute(SampleFormat& sample, const EventFormat& event)
         if ( !Manager()->ApplyCut( ( jets.size() > 4), "Njets>=5"))  return true;
         if ( !Manager()->ApplyCut( (bjets.size() > 0), "bjets>=1"))  return true;
 
+
         //---------------------------------------------------------------------------------------------//
         //-------------------------------- Apply Tight Selection cuts ---------------------------------//
         //---------------------------------------------------------------------------------------------//
         double dChi2 = dJetCombiner(jets, lights_taus, leptons);
+        // cout<<dChi2<<endl;
+
+        Manager()->FillHisto("ET_miss", event.mc()->MET().pt());
+        Manager()->FillHisto("Chi2", dChi2);
+        hET_miss->Fill(event.mc()->MET().pt());
+        hChi2->Fill(dChi2);
 
         if ( !Manager()->ApplyCut( ( event.mc()->MET().pt() < 20 ), "MET<20"))  return true;
         if ( !Manager()->ApplyCut( ( dChi2 < 20), "Chi^2<20"))  return true;
@@ -191,11 +212,13 @@ bool B2G_12_023::Execute(SampleFormat& sample, const EventFormat& event)
 }
 
 double B2G_12_023::dJetCombiner(std::vector<const MCParticleFormat*> jets, std::vector<const MCParticleFormat*> lights_taus, std::vector<const MCParticleFormat*> leptons){
-    double dMass_W = 80.385; //GeV
-    double dWidth_W = 2.085; //GeV
-    double dMass_Top = 173.34; //GeV
-    double dWidth_Top = 1.335; //GeV
-    double dChi2_Total_Smallest = 100; //Smallest chi^2 must be less than 20. This is a starting value for later logic.
+    double dMass_W = 82.4; //GeV
+    double dSigma_W = 9.1; //GeV
+    double dMass_HadTop = 171.94; //GeV
+    double dSigma_HadTop = 14.8; //GeV
+    double dMass_BNVTop = 174.8; //GeV
+    double dSigma_BNVTop = 17.2; //GeV
+    double dChi2_Total_Smallest = 1000; //Smallest chi^2 must be less than 20. This is a starting value for later logic.
 
     if ( lights_taus.size() < 2 ) return dChi2_Total_Smallest;
 
@@ -206,7 +229,7 @@ double B2G_12_023::dJetCombiner(std::vector<const MCParticleFormat*> jets, std::
             TLorentzVector LVector_W;
             LVector_W = lights_taus[j1]->momentum() + lights_taus[j2]->momentum();
             double dInvMass_W = LVector_W.M();
-            double dChi2_W = pow((dInvMass_W - dMass_W),2) / pow(dWidth_W, 2);
+            double dChi2_W = pow((dInvMass_W - dMass_W),2) / pow(dSigma_W, 2);
 
             // Loop for hadronic top
             for(int j3 = 0; j3<jets.size(); j3++){
@@ -215,7 +238,7 @@ double B2G_12_023::dJetCombiner(std::vector<const MCParticleFormat*> jets, std::
                 TLorentzVector LVector_HadTop;
                 LVector_HadTop = jets[j1]->momentum() + jets[j2]->momentum() + jets[j3]->momentum();
                 double dInvMass_HadTop = LVector_HadTop.M();                
-                double dChi2_HadTop =  pow((dInvMass_HadTop - dMass_Top),2) / pow(dWidth_Top, 2);
+                double dChi2_HadTop =  pow((dInvMass_HadTop - dMass_HadTop),2) / pow(dSigma_HadTop, 2);
 
                 // Loop for BNV decaying top
                 for(int j4=0; j4<jets.size()-1; j4++){
@@ -227,12 +250,15 @@ double B2G_12_023::dJetCombiner(std::vector<const MCParticleFormat*> jets, std::
                         TLorentzVector LVector_BNVTop;
                         LVector_BNVTop = jets[j4]->momentum() + jets[j5]->momentum() + leptons[0]->momentum();
                         double dInvMass_BNVTop = LVector_BNVTop.M();                
-                        double dChi2_BNVTop =  pow((dInvMass_BNVTop - dMass_Top),2) / pow(dWidth_Top, 2); 
+                        double dChi2_BNVTop =  pow((dInvMass_BNVTop - dMass_BNVTop),2) / pow(dSigma_BNVTop, 2); 
 
                         double dChi2_Total = dChi2_W + dChi2_HadTop + dChi2_BNVTop;
                         if (dChi2_Total < dChi2_Total_Smallest){
                             dChi2_Total_Smallest = dChi2_Total;
-                        }                       
+                        }
+                        // cout<<j1<<" : "<<j2<<" : "<<j3<<" : "<<j4<<" : "<<j5<<endl;   
+                        // cout<<"Wmass: "<<dInvMass_W<<"  WChi2: "<<dChi2_W<<"  hadtop: "<<dInvMass_HadTop<<"  hadtopChi2: "<<dChi2_HadTop<<"  dInvMass_BNVTop: "<<dInvMass_BNVTop<<"  BNVChi2: "<<dChi2_BNVTop<<"  TotalChi2: "<<dChi2_Total<<endl;
+
                     }
                 }
             }

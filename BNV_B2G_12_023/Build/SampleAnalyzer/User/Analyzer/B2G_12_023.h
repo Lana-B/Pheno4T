@@ -39,6 +39,12 @@ namespace MA5
 			double dN_T_bck;
 			double dN_B_bck;
 			double dN_B_obs;
+
+			TH1D * hET_miss;
+			TH1D * hChi2;
+			TCanvas * c1;
+			TCanvas * c2;
+
 	};
 }
 

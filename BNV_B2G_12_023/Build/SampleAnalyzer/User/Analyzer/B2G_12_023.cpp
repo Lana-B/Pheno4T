@@ -23,6 +23,7 @@ bool B2G_12_023::Initialize(const MA5::Configuration& cfg, const std::map<std::s
     cout<<""<<endl;
 
     cout << "BEGIN Initialization" << endl;
+
     Manager()->AddRegionSelection("Basic");
     Manager()->AddRegionSelection("Tight");
 
@@ -44,7 +45,6 @@ bool B2G_12_023::Initialize(const MA5::Configuration& cfg, const std::map<std::s
 
     cout << "END   Initialization" << endl;
 
-
     return true;
 }
 
@@ -55,19 +55,27 @@ bool B2G_12_023::Initialize(const MA5::Configuration& cfg, const std::map<std::s
 void B2G_12_023::Finalize(const SampleFormat& summary, const std::vector<SampleFormat>& files)
 {
     cout << "BEGIN Finalization" << endl;
-
     cout<<""<<endl;
+
     cout<<"        <><><><><><><><><><><><><><><><><><><><><><><><><><><><><>"<<endl; 
     cout<<"        <> Events passed in surviving selection region = "<<dCounterPassedEvents<<" <>"<<endl;
     cout<<"        <><><><><><><><><><><><><><><><><><><><><><><><><><><><><>"<<endl; 
+
     double output = dFunctionBeta(0, "Muon");
-    cout<<output<<endl;
+    cout<<"dFunctionBeta result: "<<output<<endl;
     c1->cd();
+    hET_miss->Draw();
+    hET_miss->GetXaxis()->SetTitle("ET_miss (GeV)");
+    hET_miss->GetYaxis()->SetTitle("Events/5GeV");
     hET_miss->Draw();
     c1->SaveAs("../Output/ET_miss.png");
     c2->cd();
     hChi2->Draw();
+    hChi2->GetXaxis()->SetTitle("#chi^2");
+    hChi2->GetYaxis()->SetTitle("#chi^2 / 10 units");
+    hChi2->Draw();
     c2->SaveAs("../Output/Chi2.png");
+
     cout<<""<<endl;
     cout << "END   Finalization" << endl;
 }
@@ -99,7 +107,6 @@ bool B2G_12_023::Execute(SampleFormat& sample, const EventFormat& event)
 
         std::vector<const MCParticleFormat*> electrons, muons, positrons, antimuons, jets, bjets, taus, MCMET;
         std::vector<const MCParticleFormat*> leptons; //electrons and muons of either charge
-        std::vector<const MCParticleFormat*> lights_taus; //lights and bs
          
         PHYSICS->mcConfig().AddHadronicId(5);   //identifying bjets as hadronic
         PHYSICS->mcConfig().AddHadronicId(21);  //identifying jets as hadronic
@@ -120,10 +127,6 @@ bool B2G_12_023::Execute(SampleFormat& sample, const EventFormat& event)
             //---------------------------------------------------------------------------------------------//
 
             if(part->statuscode() != 1) continue; //ie. skip if not a final state particle
-
-            if(part->pdgid() == 15 || part->pdgid() == -15 ){ 
-                if(std::abs(part->momentum().Eta())<2.4) taus.push_back(part);
-            }
 
             if(part->pdgid() == 11) {
                 if(std::abs(part->momentum().Eta())<2.5 && !( 1.444 <std::abs(part->momentum().Eta()) && std::abs(part->momentum().Eta())< 1.566) && part->momentum().Pt()>30){
@@ -155,20 +158,17 @@ bool B2G_12_023::Execute(SampleFormat& sample, const EventFormat& event)
             else if(std::abs(part->pdgid()) == 12) {
                 MCMET.push_back(part);
             }
-         
-            if(std::abs(part->pdgid()) == 21 || std::abs(part->pdgid()) == 15) { //light quarks and taus for W invariant mass
-                if(std::abs(part->momentum().Eta())<2.4 && part->momentum().Pt()>30 ) {
-                    jets.push_back(part);
-                    lights_taus.push_back(part);
-                }
-            }
+
             if(std::abs(part->pdgid()) == 21 || std::abs(part->pdgid()) == 15 || std::abs(part->pdgid()) == 5) { //light quarks, taus and b quarks jet momentum requirements
-                if(std::abs(part->momentum().Eta())<2.4 && part->momentum().Pt()>40) {
-                    jet_40_counter++;
-                    if(part->momentum().Pt()>55){
-                        jet_55_counter++;
-                        if( part->momentum().Pt()>70){
-                            jet_70_counter++;
+                if(std::abs(part->momentum().Eta())<2.4 && part->momentum().Pt()>30) {
+                    jets.push_back(part);
+                    if (part->momentum().Pt()>40){
+                        jet_40_counter++;
+                        if(part->momentum().Pt()>55){
+                            jet_55_counter++;
+                            if( part->momentum().Pt()>70){
+                                jet_70_counter++;
+                            }
                         }
                     }
                 }
@@ -177,8 +177,6 @@ bool B2G_12_023::Execute(SampleFormat& sample, const EventFormat& event)
 
         if( jet_70_counter < 1 || jet_55_counter < 2 || jet_40_counter < 3) return true; 
         //This ensures jets of momenta >70, >55, >40. The later cut of Njets>=5 with pt>30 takes care of the 4th and 5th jets momenta requirement.
-
-        jets.insert( jets.end(), bjets.begin(), bjets.end());
 
         //---------------------------------------------------------------------------------------------//
         //-------------------------------- Apply Basic Selection cuts ---------------------------------//
@@ -192,7 +190,7 @@ bool B2G_12_023::Execute(SampleFormat& sample, const EventFormat& event)
         //---------------------------------------------------------------------------------------------//
         //-------------------------------- Apply Tight Selection cuts ---------------------------------//
         //---------------------------------------------------------------------------------------------//
-        double dChi2 = dJetCombiner(jets, lights_taus, leptons);
+        double dChi2 = dJetCombiner(jets, leptons);
         // cout<<dChi2<<endl;
 
         Manager()->FillHisto("ET_miss", event.mc()->MET().pt());
@@ -211,7 +209,7 @@ bool B2G_12_023::Execute(SampleFormat& sample, const EventFormat& event)
   return true;
 }
 
-double B2G_12_023::dJetCombiner(std::vector<const MCParticleFormat*> jets, std::vector<const MCParticleFormat*> lights_taus, std::vector<const MCParticleFormat*> leptons){
+double B2G_12_023::dJetCombiner(std::vector<const MCParticleFormat*> jets, std::vector<const MCParticleFormat*> leptons){
     double dMass_W = 82.4; //GeV
     double dSigma_W = 9.1; //GeV
     double dMass_HadTop = 171.94; //GeV
@@ -220,14 +218,16 @@ double B2G_12_023::dJetCombiner(std::vector<const MCParticleFormat*> jets, std::
     double dSigma_BNVTop = 17.2; //GeV
     double dChi2_Total_Smallest = 1000; //Smallest chi^2 must be less than 20. This is a starting value for later logic.
 
-    if ( lights_taus.size() < 2 ) return dChi2_Total_Smallest;
+    if ( jets.size() < 2 ) return dChi2_Total_Smallest;
 
     //Loop for calculating invariant mass of W originating from hadronically decaying top. b-tagged jets not included.
-    for(int j1 = 0; j1<lights_taus.size()-1; j1++){
-        for(int j2 = j1+1; j2<lights_taus.size(); j2++){
+    for(int j1 = 0; j1<jets.size()-1; j1++){
+        if (jets[j1]->pdgid() == 5 ) continue;
+        for(int j2 = j1+1; j2<jets.size(); j2++){
+            if (jets[j2]->pdgid() == 5 ) continue;
 
             TLorentzVector LVector_W;
-            LVector_W = lights_taus[j1]->momentum() + lights_taus[j2]->momentum();
+            LVector_W = jets[j1]->momentum() + jets[j2]->momentum();
             double dInvMass_W = LVector_W.M();
             double dChi2_W = pow((dInvMass_W - dMass_W),2) / pow(dSigma_W, 2);
 

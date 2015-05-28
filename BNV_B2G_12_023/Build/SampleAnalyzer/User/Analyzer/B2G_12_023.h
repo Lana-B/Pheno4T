@@ -15,7 +15,7 @@ namespace MA5
 			virtual bool Execute(SampleFormat& sample, const EventFormat& event);
 			
 		private:
-			double dJetCombiner(std::vector<const MCParticleFormat*> jets, std::vector<const MCParticleFormat*> lights_taus, std::vector<const MCParticleFormat*> leptons);
+			double dJetCombiner(std::vector<const MCParticleFormat*> jets, std::vector<const MCParticleFormat*> leptons);
 			double dFunctionBeta(double dBeta, std::string lepton); //function for calculating MET efficiency
 			double dFunctionEfficiencies(double dBeta, std::string lepton, std::string TorB, std::string channel);
 

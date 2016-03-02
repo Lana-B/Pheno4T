@@ -26,10 +26,10 @@ bool CMS_SUS_13_013::Initialize(const MA5::Configuration& cfg, const std::map<st
     
     Manager()->AddRegionSelection("SR28");
     
-    Manager()->AddCut("2 leptons");
-    Manager()->AddCut("same sign leptons");
+    //Manager()->AddCut("2 leptons");
+    //Manager()->AddCut("same sign leptons");
     Manager()->AddCut("Njets>=4", "SR28");
-    Manager()->AddCut("3rd lepton veto");
+    //Manager()->AddCut("3rd lepton veto");
     
     dCounterSelectionEff = 0;
     dCounterPassedEvents = 0;
@@ -236,46 +236,46 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
              //if(part->pdgid() == 15 || part->pdgid() == -15 ){ /*cout<<"!!!!!!!!  TAU !!!!!!!"<<endl;*/}
 
              if(part->pdgid() == 11) {
-                if(std::abs(part->momentum().Eta())<2.5 && !( 1.4442<std::abs(part->momentum().Eta()) && std::abs(part->momentum().Eta())< 1.566) && part->momentum().Pt()>20){
+                if(std::abs(part->momentum().Eta())<2.4 && !( 1.4442<std::abs(part->momentum().Eta()) && std::abs(part->momentum().Eta())< 1.566) && part->momentum().Pt()>20){
                     electrons.push_back(part);
                     leptons.push_back(part);
                     negleptons.push_back(part);
                 }
              }
              else if(part->pdgid() == 13) {
-                if(std::abs(part->momentum().Eta())<2.5 && part->momentum().Pt()>20){
+                if(std::abs(part->momentum().Eta())<2.4 && part->momentum().Pt()>20){
                     muons.push_back(part);
                     leptons.push_back(part);
                     negleptons.push_back(part);
                 }
              }
              else if(part->pdgid() == -11) {
-                if(std::abs(part->momentum().Eta())<2.5 && !( 1.4442<std::abs(part->momentum().Eta()) && std::abs(part->momentum().Eta())< 1.566) && part->momentum().Pt()>20){
+                if(std::abs(part->momentum().Eta())<2.4 && !( 1.4442<std::abs(part->momentum().Eta()) && std::abs(part->momentum().Eta())< 1.566) && part->momentum().Pt()>20){
                     positrons.push_back(part);
                     leptons.push_back(part);
                     posleptons.push_back(part);
                 }
              }
              else if(part->pdgid() == -13) {
-                if(std::abs(part->momentum().Eta())<2.5 && part->momentum().Pt()>20){
+                if(std::abs(part->momentum().Eta())<2.4 && part->momentum().Pt()>20){
                     antimuons.push_back(part);
                     leptons.push_back(part);
                     posleptons.push_back(part);
                 }
              }
              else if(std::abs(part->pdgid()) == 5) {
-                if(std::abs(part->momentum().Eta())<2.5) bjets.push_back(part);
+                if(std::abs(part->momentum().Eta())<2.4) bjets.push_back(part);
              }
              else if(std::abs(part->pdgid()) == 12) {
                 MCMET.push_back(part);
              }
              
              if(std::abs(part->pdgid()) == 21 || std::abs(part->pdgid()) == 5) { //light quarks and b quarks for btagging weight
-                 if(std::abs(part->momentum().Eta())<2.5) lightsnbs.push_back(part);
+                 if(std::abs(part->momentum().Eta())<2.4) lightsnbs.push_back(part);
              }
              if(std::abs(part->pdgid()) == 21 || std::abs(part->pdgid()) == 5 || std::abs(part->pdgid()) == 15) { 
                 //lights, bs, taus...ie. all jets
-                if(std::abs(part->momentum().Eta())<2.5) jets.push_back(part);
+                if(std::abs(part->momentum().Eta())<2.4) jets.push_back(part);
              }
 
          }
@@ -285,13 +285,13 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          //-----------------------Apply baseline cuts 2 same sign leptons-------------------------------//
          //---------------------------------------------------------------------------------------------//
 
-         if ( !Manager()->ApplyCut( (leptons.size() > 1),"2 leptons")) return true; //there are at least 2 leptons with |eta|>2.5       
+         //if ( !Manager()->ApplyCut( (leptons.size() > 1),"2 leptons")) return true; //there are at least 2 leptons with |eta|>2.5       
 
-         SSlep = false;  //is there a same sign pair?
-         if(posleptons.size() > 1 || negleptons.size() > 1){
-            SSlep = true;  //if there are either 2 positive or 2 negative leptons, then there exists a same sign pair
-         }
-         if ( !Manager()->ApplyCut( SSlep,"same sign leptons")) return true;
+         // SSlep = false;  //is there a same sign pair?
+         // if(posleptons.size() > 1 || negleptons.size() > 1){
+         //    SSlep = true;  //if there are either 2 positive or 2 negative leptons, then there exists a same sign pair
+         // }
+         //if ( !Manager()->ApplyCut( SSlep,"same sign leptons")) return true;
          
          //---------------------------------------------------------------------------------------------//
          //---------------------------------Making selection region cuts--------------------------------//
@@ -305,34 +305,34 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          //-------------------as well as multiboson (WZ, ZZ and tribosons) production-------------------//
          //---------------------------------------------------------------------------------------------//
  
-         VETObool=true;  //default is that it is not vetoed
+         // VETObool=true;  //default is that it is not vetoed
 
-         bool negbool = dFunctionVETO(negleptons, posleptons); //if two SS negative leptons with pT>20, check positive leptons with no pT cut
-         bool posbool = dFunctionVETO(posleptons, negleptons); //if two SS positive leptons with pT>20, check negative leptons with no pT cut
+         // bool negbool = dFunctionVETO(negleptons, posleptons); //if two SS negative leptons with pT>20, check positive leptons with no pT cut
+         // bool posbool = dFunctionVETO(posleptons, negleptons); //if two SS positive leptons with pT>20, check negative leptons with no pT cut
 
-         if( negbool == true || posbool == true){
-             VETObool = false; //if the veto criteria are satisified for either a positive pair or a negative pair the event does not pass the selection
-         }
+         // if( negbool == true || posbool == true){
+         //     VETObool = false; //if the veto criteria are satisified for either a positive pair or a negative pair the event does not pass the selection
+         // }
 
          //---------------------------------------------------------------------------------------------//
          //------------------------------Calculate and combine efficiences------------------------------//
          //---------------------------------------------------------------------------------------------//
          
-         dMETEff = dFunctionMET(event.mc()->MET().pt(), "SR28");
-         dHTEff = dFunctionHT(event.mc()->THT(), "SR28");
-         dLeptonEff = dFunctionTotalLepton(posleptons, negleptons);
-         dBTagEff = dFunctionTotalBTag(lightsnbs); //includes lights being mistagged as bs
+         // dMETEff = dFunctionMET(event.mc()->MET().pt(), "SR28");
+         // dHTEff = dFunctionHT(event.mc()->THT(), "SR28");
+         // dLeptonEff = dFunctionTotalLepton(posleptons, negleptons);
+         // dBTagEff = dFunctionTotalBTag(lightsnbs); //includes lights being mistagged as bs
 
-         METcounter += dMETEff;
-         HTcounter += dHTEff;
-         leptoncounter += dLeptonEff;
-         btagcounter += dBTagEff;
+         // METcounter += dMETEff;
+         // HTcounter += dHTEff;
+         // leptoncounter += dLeptonEff;
+         // btagcounter += dBTagEff;
 
 
-         dSelectionEff = dHTEff * dMETEff * dBTagEff * dLeptonEff;
-         Manager()->SetCurrentEventWeight((float)dSelectionEff);
+         // dSelectionEff = dHTEff * dMETEff * dBTagEff * dLeptonEff;
+         // Manager()->SetCurrentEventWeight((float)dSelectionEff);
 
-         if ( !Manager()->ApplyCut( VETObool,"3rd lepton veto")) return true;
+         //if ( !Manager()->ApplyCut( VETObool,"3rd lepton veto")) return true;
 
 
          dCounterPassedEvents += 1;             //counts number of Events

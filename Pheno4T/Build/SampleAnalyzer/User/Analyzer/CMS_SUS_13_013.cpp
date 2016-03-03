@@ -26,10 +26,10 @@ bool CMS_SUS_13_013::Initialize(const MA5::Configuration& cfg, const std::map<st
     
     Manager()->AddRegionSelection("SR28");
     
-    //Manager()->AddCut("2 leptons");
-    //Manager()->AddCut("same sign leptons");
+    Manager()->AddCut("2 leptons");
+    Manager()->AddCut("same sign leptons");
     Manager()->AddCut("Njets>=4", "SR28");
-    //Manager()->AddCut("3rd lepton veto");
+    Manager()->AddCut("3rd lepton veto");
     
     dCounterSelectionEff = 0;
     dCounterPassedEvents = 0;
@@ -56,13 +56,9 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
     cout<<""<<endl;
     cout<<"        <><><><>><><><><><><><><><><><><><><><><><><><>"<<endl; 
     cout<<"        <> Events passed = "<<dCounterPassedEvents<<"                       <>"<<endl;
-    
     cout<<"        <> Weighted events = "<<dCounterSelectionEff<<"                 <>"<<endl;
     cout<<"        <> Selection efficiency for SR28= "<<dCounterSelectionEff*100/10000<<"%  <>"<<endl;
     cout<<"        <><><><>><><><><><><><><><><><><><><><><><><><>"<<endl; 
-
-         //cout<<"average METeff = "<<METcounter/dCounterPassedEvents<"  HTeff = "<<HTcounter/dCounterPassedEvents<<"  leptoneff = "<<leptoncounter/dCounterPassedEvents<<"  btagcounter = "<<btagcounter/dCounterPassedEvents<<endl;
-
     cout<<""<<endl;
     
     //////// Plotting efficiency curves /////////
@@ -98,87 +94,87 @@ void CMS_SUS_13_013::Finalize(const SampleFormat& summary, const std::vector<Sam
     }
 
     //Graph for the efficiency of tagging a b jet as a b
-    TCanvas *c1 = new TCanvas();
-    c1->cd();
-    EffBTag = new TGraph(vecBTag.size(), &(vecBTag[0]), &(vecBTagEff[0]));
-    EffBTag->SetLineColor(kBlue);
-    EffBTag->SetLineWidth(2);
-    EffBTag->Draw("APL");
-    EffBTag->GetYaxis()->SetRangeUser(0, 1);
-    EffBTag->SetTitle("BTag");
-    EffBTag->Draw("APL");
-    EffBTag->GetXaxis()->SetTitle("gen Jet PT");
-    EffBTag->GetYaxis()->SetTitle("Efficiency");
-    EffBTag->Draw("APL");
-    c1->SaveAs("BTagEff.png");
+    // TCanvas *c1 = new TCanvas();
+    // c1->cd();
+    // EffBTag = new TGraph(vecBTag.size(), &(vecBTag[0]), &(vecBTagEff[0]));
+    // EffBTag->SetLineColor(kBlue);
+    // EffBTag->SetLineWidth(2);
+    // EffBTag->Draw("APL");
+    // EffBTag->GetYaxis()->SetRangeUser(0, 1);
+    // EffBTag->SetTitle("BTag");
+    // EffBTag->Draw("APL");
+    // EffBTag->GetXaxis()->SetTitle("gen Jet PT");
+    // EffBTag->GetYaxis()->SetTitle("Efficiency");
+    // EffBTag->Draw("APL");
+    // c1->SaveAs("BTagEff.png");
     
-    //Graph for HT efficiency
-    TCanvas *c2 = new TCanvas();
-    c2->cd();
-    EffHT = new TGraph(vecHT.size(), &(vecHT[0]), &(vecHTEff[0]));
-    EffHT->SetLineColor(kRed);
-    EffHT->SetLineWidth(2);
-    EffHT->SetTitle("HT");
-    EffHT->Draw("APL");
-    EffHT->GetXaxis()->SetTitle("gen HT");
-    EffHT->GetYaxis()->SetTitle("Efficiency");
-    EffHT->Draw("APL");
-    c2->SaveAs("HTEff.png");
+    // //Graph for HT efficiency
+    // TCanvas *c2 = new TCanvas();
+    // c2->cd();
+    // EffHT = new TGraph(vecHT.size(), &(vecHT[0]), &(vecHTEff[0]));
+    // EffHT->SetLineColor(kRed);
+    // EffHT->SetLineWidth(2);
+    // EffHT->SetTitle("HT");
+    // EffHT->Draw("APL");
+    // EffHT->GetXaxis()->SetTitle("gen HT");
+    // EffHT->GetYaxis()->SetTitle("Efficiency");
+    // EffHT->Draw("APL");
+    // c2->SaveAs("HTEff.png");
     
-    //Graph for MET efficiency
-    TCanvas *c3 = new TCanvas();
-    c3->cd();
-    EffMET = new TGraph(vecMET.size(), &(vecMET[0]), &(vecMETEff[0]));
-    EffMET->SetLineColor(kGreen);
-    EffMET->SetLineWidth(2);
-    EffMET->SetTitle("MET");
-    EffMET->Draw("APL");
-    EffMET->GetXaxis()->SetTitle("gen ETmiss");
-    EffMET->GetYaxis()->SetTitle("Efficiency");
-    EffMET->Draw("APL");
-    c3->SaveAs("METEff.png");
+    // //Graph for MET efficiency
+    // TCanvas *c3 = new TCanvas();
+    // c3->cd();
+    // EffMET = new TGraph(vecMET.size(), &(vecMET[0]), &(vecMETEff[0]));
+    // EffMET->SetLineColor(kGreen);
+    // EffMET->SetLineWidth(2);
+    // EffMET->SetTitle("MET");
+    // EffMET->Draw("APL");
+    // EffMET->GetXaxis()->SetTitle("gen ETmiss");
+    // EffMET->GetYaxis()->SetTitle("Efficiency");
+    // EffMET->Draw("APL");
+    // c3->SaveAs("METEff.png");
     
-    //Graph for the efficiency of reconstructing a jet
-    TCanvas *c4 = new TCanvas();
-    c4->cd();
-    EffJetReco = new TGraph(vecJetReco.size(), &(vecJetReco[0]), &(vecJetRecoEff[0]));
-    EffJetReco->SetLineColor(kBlue);
-    EffJetReco->SetLineWidth(2);
-    EffJetReco->SetTitle("Jet reconstruction");
-    EffJetReco->Draw("APL");
-    EffJetReco->GetXaxis()->SetTitle("gen Jet PT");
-    EffJetReco->GetYaxis()->SetTitle("Efficiency");
-    EffJetReco->Draw("APL");
-    c4->SaveAs("JetRecoEff.png");
+    // //Graph for the efficiency of reconstructing a jet
+    // TCanvas *c4 = new TCanvas();
+    // c4->cd();
+    // EffJetReco = new TGraph(vecJetReco.size(), &(vecJetReco[0]), &(vecJetRecoEff[0]));
+    // EffJetReco->SetLineColor(kBlue);
+    // EffJetReco->SetLineWidth(2);
+    // EffJetReco->SetTitle("Jet reconstruction");
+    // EffJetReco->Draw("APL");
+    // EffJetReco->GetXaxis()->SetTitle("gen Jet PT");
+    // EffJetReco->GetYaxis()->SetTitle("Efficiency");
+    // EffJetReco->Draw("APL");
+    // c4->SaveAs("JetRecoEff.png");
     
-    //Graph for the efficiency of reconstructing leptons - muons and electrons
-    TCanvas *c5 = new TCanvas();
-    c5->cd();
-    EffMuon = new TGraph(vecMuon.size(), &(vecMuon[0]), &(vecMuonEff[0]));
-    EffElectron = new TGraph(vecElectron.size(), &(vecElectron[0]), &(vecElectronEff[0]));
-    EffElectron->SetLineColor(kBlue);
-    EffElectron->SetLineWidth(2);
-    EffMuon->GetYaxis()->SetRangeUser(0, 0.7);
-    EffMuon->SetLineColor(kRed);
-    EffMuon->SetLineWidth(2);
-    EffMuon->SetTitle("Jet reconstruction");
-    EffMuon->Draw("APL");
-    EffMuon->GetXaxis()->SetTitle("lepton PT");
-    EffMuon->GetYaxis()->SetTitle("Efficiency");
-    EffMuon->Draw("APL");
-    EffElectron->Draw("same");
-    c5->SaveAs("LeptonEff.png");
+    // //Graph for the efficiency of reconstructing leptons - muons and electrons
+    // TCanvas *c5 = new TCanvas();
+    // c5->cd();
+    // EffMuon = new TGraph(vecMuon.size(), &(vecMuon[0]), &(vecMuonEff[0]));
+    // EffElectron = new TGraph(vecElectron.size(), &(vecElectron[0]), &(vecElectronEff[0]));
+    // EffElectron->SetLineColor(kBlue);
+    // EffElectron->SetLineWidth(2);
+    // EffMuon->GetYaxis()->SetRangeUser(0, 0.7);
+    // EffMuon->SetLineColor(kRed);
+    // EffMuon->SetLineWidth(2);
+    // EffMuon->SetTitle("Jet reconstruction");
+    // EffMuon->Draw("APL");
+    // EffMuon->GetXaxis()->SetTitle("lepton PT");
+    // EffMuon->GetYaxis()->SetTitle("Efficiency");
+    // EffMuon->Draw("APL");
+    // EffElectron->Draw("same");
+    // c5->SaveAs("LeptonEff.png");
     
     
-    delete EffMET;
-    delete EffHT;
-    delete EffBTag;
-    delete EffJetReco;
-    delete c1;
-    delete c2;
-    delete c3;
-    delete c4;
-    delete c5;
+    // delete EffMET;
+    // delete EffHT;
+    // delete EffBTag;
+    // delete EffJetReco;
+    // delete c1;
+    // delete c2;
+    // delete c3;
+    // delete c4;
+    // delete c5;
 
     cout<<""<<endl;
     cout << "END   Finalization" << endl;
@@ -233,7 +229,6 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
              //---------------------------------------------------------------------------------------------//
 
              if(part->statuscode() != 1) continue; //ie. skip if not a final state particle
-             //if(part->pdgid() == 15 || part->pdgid() == -15 ){ /*cout<<"!!!!!!!!  TAU !!!!!!!"<<endl;*/}
 
              if(part->pdgid() == 11) {
                 if(std::abs(part->momentum().Eta())<2.4 && !( 1.4442<std::abs(part->momentum().Eta()) && std::abs(part->momentum().Eta())< 1.566) && part->momentum().Pt()>20){
@@ -285,13 +280,13 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          //-----------------------Apply baseline cuts 2 same sign leptons-------------------------------//
          //---------------------------------------------------------------------------------------------//
 
-         //if ( !Manager()->ApplyCut( (leptons.size() > 1),"2 leptons")) return true; //there are at least 2 leptons with |eta|>2.5       
+         if ( !Manager()->ApplyCut( (leptons.size() > 1),"2 leptons")) return true; //there are at least 2 leptons with |eta|>2.5       
 
-         // SSlep = false;  //is there a same sign pair?
-         // if(posleptons.size() > 1 || negleptons.size() > 1){
-         //    SSlep = true;  //if there are either 2 positive or 2 negative leptons, then there exists a same sign pair
-         // }
-         //if ( !Manager()->ApplyCut( SSlep,"same sign leptons")) return true;
+         SSlep = false;  //is there a same sign pair?
+         if(posleptons.size() > 1 || negleptons.size() > 1){
+            SSlep = true;  //if there are either 2 positive or 2 negative leptons, then there exists a same sign pair
+         }
+         if ( !Manager()->ApplyCut( SSlep,"same sign leptons")) return true;
          
          //---------------------------------------------------------------------------------------------//
          //---------------------------------Making selection region cuts--------------------------------//
@@ -305,34 +300,34 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
          //-------------------as well as multiboson (WZ, ZZ and tribosons) production-------------------//
          //---------------------------------------------------------------------------------------------//
  
-         // VETObool=true;  //default is that it is not vetoed
+         VETObool=true;  //default is that it is not vetoed
 
-         // bool negbool = dFunctionVETO(negleptons, posleptons); //if two SS negative leptons with pT>20, check positive leptons with no pT cut
-         // bool posbool = dFunctionVETO(posleptons, negleptons); //if two SS positive leptons with pT>20, check negative leptons with no pT cut
+         bool negbool = dFunctionVETO(negleptons, posleptons); //if two SS negative leptons with pT>20, check positive leptons with no pT cut
+         bool posbool = dFunctionVETO(posleptons, negleptons); //if two SS positive leptons with pT>20, check negative leptons with no pT cut
 
-         // if( negbool == true || posbool == true){
-         //     VETObool = false; //if the veto criteria are satisified for either a positive pair or a negative pair the event does not pass the selection
-         // }
+         if( negbool == true || posbool == true){
+             VETObool = false; //if the veto criteria are satisified for either a positive pair or a negative pair the event does not pass the selection
+         }
 
          //---------------------------------------------------------------------------------------------//
          //------------------------------Calculate and combine efficiences------------------------------//
          //---------------------------------------------------------------------------------------------//
          
-         // dMETEff = dFunctionMET(event.mc()->MET().pt(), "SR28");
-         // dHTEff = dFunctionHT(event.mc()->THT(), "SR28");
-         // dLeptonEff = dFunctionTotalLepton(posleptons, negleptons);
-         // dBTagEff = dFunctionTotalBTag(lightsnbs); //includes lights being mistagged as bs
+         dMETEff = dFunctionMET(event.mc()->MET().pt(), "SR28");
+         dHTEff = dFunctionHT(event.mc()->THT(), "SR28");
+         dLeptonEff = dFunctionTotalLepton(posleptons, negleptons);
+         dBTagEff = dFunctionTotalBTag(lightsnbs); //includes lights being mistagged as bs
 
-         // METcounter += dMETEff;
-         // HTcounter += dHTEff;
-         // leptoncounter += dLeptonEff;
-         // btagcounter += dBTagEff;
+         METcounter += dMETEff;
+         HTcounter += dHTEff;
+         leptoncounter += dLeptonEff;
+         btagcounter += dBTagEff;
 
 
-         // dSelectionEff = dHTEff * dMETEff * dBTagEff * dLeptonEff;
-         // Manager()->SetCurrentEventWeight((float)dSelectionEff);
+         dSelectionEff = dHTEff * dMETEff * dBTagEff * dLeptonEff;
+         Manager()->SetCurrentEventWeight((float)dSelectionEff);
 
-         //if ( !Manager()->ApplyCut( VETObool,"3rd lepton veto")) return true;
+         if ( !Manager()->ApplyCut( VETObool,"3rd lepton veto")) return true;
 
 
          dCounterPassedEvents += 1;             //counts number of Events
@@ -350,10 +345,11 @@ bool CMS_SUS_13_013::Execute(SampleFormat& sample, const EventFormat& event)
 //////////////////////////////////////////////////////////////////////////////
 
 double CMS_SUS_13_013::dFunctionMET(double dGenMET, std::string SearchReg){
+// Efficiency for an event to satisfy a given reconstructed ETmiss threshold as a function of gen-level ETmiss
     double E_inf=0;
     double numxhalf=0;
     double sigma=1;
-    if (SearchReg == "SR28"){
+    if (SearchReg == "SR28"){ //for 120GeV threshold
         E_inf = 0.999;      // +\- 0.001
         numxhalf = 117.85;  // +\-0.09
         sigma = 36.90;      // +\-0.14
@@ -364,10 +360,12 @@ double CMS_SUS_13_013::dFunctionMET(double dGenMET, std::string SearchReg){
 }
 
 double CMS_SUS_13_013::dFunctionHT(double dGenHT, std::string SearchReg){
+// Efficiency for an event to satisfy a given reconstructed HT threshold as a function of gen-level HT
+
     double E_inf=0;
     double numxhalf=0;
     double sigma=1;
-    if (SearchReg == "SR28"){
+    if (SearchReg == "SR28"){ //for 400GeV threshold
         E_inf = 0.999;      // +\- 0.001
         numxhalf = 378.69;  // +\-0.17
         sigma = 59.41;      // +\-0.26
@@ -377,7 +375,8 @@ double CMS_SUS_13_013::dFunctionHT(double dGenHT, std::string SearchReg){
     return efficiency;
 }
 
-double CMS_SUS_13_013::dFunctionLepton(double dGenLepPt, int leptFlav, std::string SearchReg){ //Function for individual lepton ID efficiency
+double CMS_SUS_13_013::dFunctionLepton(double dGenLepPt, int leptFlav, std::string SearchReg){ 
+//Function for individual lepton ID efficiency
     double E_inf=0;
     double E_10=0;
     double sigma=1;
@@ -443,6 +442,7 @@ double CMS_SUS_13_013::dFunctionTotalBTag(std::vector<const MCParticleFormat*> l
 }
 
 bool CMS_SUS_13_013::dFunctionVETO(std::vector<const MCParticleFormat*> leptons1, std::vector<const MCParticleFormat*> leptons2){
+// Z/gamma veto
     bool bResult = false;
     if (leptons1.size()>1 && leptons2.size()>0){//if there are two SS leptons and
         for (int j=0; j<leptons2.size();j++){
@@ -467,18 +467,18 @@ bool CMS_SUS_13_013::dFunctionVETO(std::vector<const MCParticleFormat*> leptons1
 }
 
 double CMS_SUS_13_013::dFunctionTotalLepton(std::vector<const MCParticleFormat*> posleptons, std::vector<const MCParticleFormat*> negleptons){
-
+// Efficiency for finding 2 same sign leptons
     double w_0pairs;
     double w_GE1pair; //efficiency for >= one pair
     
-    if ( posleptons.size() > 1 && negleptons.size() > 1){
+    if ( posleptons.size() > 1 && negleptons.size() > 1){ //if there are >=2 positive and >=2 negative leptons
         w_0pairs = (1 - dFunctionGE2("lepton", posleptons)) * (1 - dFunctionGE2("lepton", negleptons));
         w_GE1pair = 1 -  w_0pairs;
     }
-    else if ( posleptons.size() > 1 && negleptons.size() <2){
+    else if ( posleptons.size() > 1 && negleptons.size() <2){ //multiple positive leptons which could form same sign pair but <2 negative leptons
         w_GE1pair = dFunctionGE2("lepton", posleptons);
     }
-    else if ( negleptons.size() > 1 && posleptons.size() <2){
+    else if ( negleptons.size() > 1 && posleptons.size() <2){ //multiple negative leptons which could form same sign pair but <2 positive leptons
         w_GE1pair = dFunctionGE2("lepton", negleptons);
     }
     else{
@@ -488,7 +488,8 @@ double CMS_SUS_13_013::dFunctionTotalLepton(std::vector<const MCParticleFormat*>
 }
 
 
-double CMS_SUS_13_013::dFunctionGE2(std::string particleType, std::vector<const MCParticleFormat*> vec_particles){ //function for calculating getting >=2 objects at reco level given there are n at gen level
+double CMS_SUS_13_013::dFunctionGE2(std::string particleType, std::vector<const MCParticleFormat*> vec_particles){
+//function for calculating getting >=2 objects at reco level given there are n at gen level
     double w_GE2;
     
     if (vec_particles.size() < 2){
@@ -496,8 +497,8 @@ double CMS_SUS_13_013::dFunctionGE2(std::string particleType, std::vector<const 
     }
     
     else{  // if there are at least 2 particle in the vector we can calculate eff >=2
-        double w_0bTags = 1;
-        double w_1bTag = 0;
+        double w_0objects = 1;
+        double w_1objects = 0;
         double product, eff_i, eff_j;
         
         for (int i =0; i<vec_particles.size(); i++){
@@ -518,8 +519,7 @@ double CMS_SUS_13_013::dFunctionGE2(std::string particleType, std::vector<const 
             if (eff_i < 0){
                 eff_i = 0;
             }
-            //cout<<" i: "<<i<<"  pdgid: "<<vec_particles[i]->pdgid()<<"   eff: "<<eff_i<<endl;
-            w_0bTags *= (1 - eff_i);
+            w_0objects *= (1 - eff_i);
             
             product = eff_i;
             for (int j=0; j< vec_particles.size(); j++){
@@ -543,13 +543,11 @@ double CMS_SUS_13_013::dFunctionGE2(std::string particleType, std::vector<const 
                         eff_j = 0;
                     }
                     product *= ( 1 - eff_j );
-                        //cout<<" j: "<<j<<"  pdgid: "<<vec_particles[j]->pdgid()<<"   eff: "<<eff_j<<endl;
                 }
             }//end of j for loop
-            w_1bTag += product;
+            w_1objects += product;
         }//end of i for loop
-        w_GE2 = 1 - w_0bTags - w_1bTag;
-        //cout<<"w0: "<<w_0bTags<<"  w1: "<<w_1bTag<<"  w_GE2: "<<w_GE2<<endl;
+        w_GE2 = 1 - w_0objects - w_1objects;
     }
         
     return w_GE2;

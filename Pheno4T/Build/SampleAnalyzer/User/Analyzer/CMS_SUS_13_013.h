@@ -2,7 +2,7 @@
 #define analysis_CMS_SUS_13_013_h
 
 #include "SampleAnalyzer/Process/Analyzer/AnalyzerBase.h"
-#include <TGraph.h>
+// #include <TGraph.h>
 namespace MA5
 {
     class CMS_SUS_13_013 : public AnalyzerBase
@@ -59,12 +59,12 @@ namespace MA5
         
      private:
         
-        TGraph * EffMET; //Efficiency plot for MET
-        TGraph * EffHT; //Efficiency plot for MET
-        TGraph * EffJetReco; //Efficiency plot for MET
-        TGraph * EffBTag; //Efficiency plot for MET
-        TGraph * EffElectron; //Efficiency plot for MET
-        TGraph * EffMuon; //Efficiency plot for MET
+        // TGraph * EffMET; //Efficiency plot for MET
+        // TGraph * EffHT; //Efficiency plot for MET
+        // TGraph * EffJetReco; //Efficiency plot for MET
+        // TGraph * EffBTag; //Efficiency plot for MET
+        // TGraph * EffElectron; //Efficiency plot for MET
+        // TGraph * EffMuon; //Efficiency plot for MET
         
     };
 }
